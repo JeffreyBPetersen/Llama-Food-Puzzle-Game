@@ -19,7 +19,7 @@ function launch(){
 
 // arrow keys control
 function keyHandler(){
-	var keyCode = event.keyCode;
+    var keyCode = event.keyCode;
       if (keyCode == 37) {
         document.getElementById("demo").innerHTML = "left";
       }
