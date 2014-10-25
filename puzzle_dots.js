@@ -14,7 +14,26 @@ function launch(){
                 console.log("(" + i + ", " + j + ")    " + board.space[i][j]);
             }
         }
+        document.addEventListener('keydown', keyHandler, true);
 }
+
+// arrow keys control
+function keyHandler(){
+	var keyCode = event.keyCode;
+      if (keyCode == 37) {
+        document.getElementById("demo").innerHTML = "left";
+      }
+      if (keyCode == 38) {
+        document.getElementById("demo").innerHTML = "up";
+      }
+      if (keyCode == 39) {
+        document.getElementById("demo").innerHTML = "right";
+      }
+      if (keyCode == 40) {
+        document.getElementById("demo").innerHTML = "down";
+      }
+}
+
 
 function DEBUG_randomize_board(density){ // density is a number from 0 to 1
 	for(var i = 0; i < board.size; i++){
