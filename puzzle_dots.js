@@ -94,14 +94,15 @@ function Board(size){ // size is any positive integer
             ctx.fillRect(canvas.width - this.x_padding, 0, canvas.width, canvas.height);
         }
         
-        //draws all pieces on the canvas
+        //draws all pieces to the canvas
         this.drawPieces = function()
         {
             for (i = 0; i < this.size; i++)
             {
                 for (j = 0; j < this.size; j++)
                 {
-                    if (this.space[i][j] !== undefined) {
+                    if (this.space[i][j] !== undefined)  //if the space isn't blank, draw the object
+                    {  
                         this.space[i][j].draw(this.x_padding + j * this.x_spacing, i * this.y_spacing, this.x_spacing, this.y_spacing);
                     }
                 }
@@ -114,19 +115,56 @@ function Dot(color, direction){ // color is a hex code, direction is "up", "righ
 	this.color = color
 	this.direction = direction
         
+        // takes a location to be drawn, and the width and height of each board tile and draws the dot
         this.draw = function(x, y, space_width, space_height)
         {
             var canvas = document.getElementById('game_canvas');
             var ctx = canvas.getContext('2d');
             x += space_width / 2;
             y += space_height / 2;
+            radius = Math.min(space_width / 2.5, space_height / 2.5);
                   
+            ctx.fillStyle = this.color;
             ctx.moveTo(x, y);
             ctx.beginPath();
-            ctx.arc(x, y, Math.min(space_width / 2.5, space_height / 2.5), 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.fillStyle = this.color;
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
             ctx.fill();
+            
+            //draw the arrows
+            distance_to_arrow = Math.min(space_width / 2, space_height / 2);
+            switch (this.direction)
+            {
+                case "down":
+                    ctx.moveTo(x - radius, y);
+                    ctx.lineTo(x, y + distance_to_arrow);
+                    ctx.lineTo(x + radius, y);
+                    ctx.lineTo(x - radius, y);
+                    ctx.fill();
+                    break;
+                case "up":
+                    ctx.moveTo(x - radius, y);
+                    ctx.lineTo(x, y - distance_to_arrow);
+                    ctx.lineTo(x + radius, y);
+                    ctx.lineTo(x - radius, y);
+                    ctx.fill();
+                    break;
+                case "left":
+                    ctx.moveTo(x, y - radius);
+                    ctx.lineTo(x - distance_to_arrow, y);
+                    ctx.lineTo(x, y + radius);
+                    ctx.lineTo(x, y - radius);
+                    ctx.fill();
+                    break;
+                case "right":
+                    ctx.moveTo(x, y - radius);
+                    ctx.lineTo(x + distance_to_arrow, y);
+                    ctx.lineTo(x, y + radius);
+                    ctx.lineTo(x, y - radius);
+                    ctx.fill();
+                    break;
+            }
+
+
         }
 }
 
