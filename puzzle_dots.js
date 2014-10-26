@@ -1,5 +1,6 @@
 // Global default for board size
 var board_size = 3;
+const dot_size = 3; //increasing number will decrease size of dot
 
 // Executed when page is loaded
 function launch(){
@@ -122,7 +123,7 @@ function Dot(color, direction){ // color is a hex code, direction is "up", "righ
             var ctx = canvas.getContext('2d');
             x += space_width / 2;
             y += space_height / 2;
-            radius = Math.min(space_width / 2.5, space_height / 2.5);
+            radius = Math.min(space_width / dot_size, space_height / dot_size);
                   
             ctx.fillStyle = this.color;
             ctx.moveTo(x, y);
