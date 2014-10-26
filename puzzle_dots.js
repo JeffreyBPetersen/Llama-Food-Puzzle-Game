@@ -9,6 +9,33 @@ function launch(){
         
         DEBUG_randomize_board(.3);
         board.drawPieces();
+        document.addEventListener('keydown', keyHandler, true);
+        document.addEventListener('click', mouseClick, false);
+}
+
+// arrow keys control
+function keyHandler(){
+  var keyCode = event.keyCode;
+      if (keyCode == 37) {
+        test.innerHTML = "left";
+      }
+
+      if (keyCode == 38) {
+        test.innerHTML = "up";
+      }
+
+      if (keyCode == 39) {
+        test.innerHTML = "right";
+      }
+
+      if (keyCode == 40) {
+        test.innerHTML = "down";
+      }
+}
+
+// mouse clicks 
+function mouseClick(event){
+    test.innerHTML = "Click";
 }
 
 function DEBUG_randomize_board(density){ // density is a number from 0 to 1
@@ -93,6 +120,13 @@ function Board(size){ // size is any positive integer
             ctx.fillStyle = "#9932CC";
             ctx.fillRect(0, 0, this.x_padding, canvas.height)
             ctx.fillRect(canvas.width - this.x_padding, 0, canvas.width, canvas.height);
+            
+            //show Level
+            ctx.fillStyle = "white";
+            ctx.font = "20px Helvetica";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText("Level " + levels, 32, 32);
         }
         
         //draws all pieces to the canvas
