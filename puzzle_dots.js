@@ -4,16 +4,10 @@ var board_size = 3;
 // Executed when page is loaded
 function launch(){
 	board = new Board(board_size)
-        drawGrid(board);
+        board.drawGrid();
         
         DEBUG_randomize_board(.3);
-        for (i = 0; i < board_size; i++)
-        {
-            for (j = 0; j < board_size; j++)
-            {
-                console.log("(" + i + ", " + j + ")    " + board.space[i][j]);
-            }
-        }
+        board.drawPieces();
 }
 
 function DEBUG_randomize_board(density){ // density is a number from 0 to 1
@@ -64,45 +58,75 @@ function Board(size){ // size is any positive integer
 	for(var i = 0; i < size; i++){
 		this.space[i] = new Array()
 	}
+        
+        //draws auto-scaled grid on the canvas
+        this.drawGrid = function()
+        {
+            var canvas = document.getElementById('game_canvas');
+            var ctx = canvas.getContext('2d');
+            
+            //draws lines separating board from sides
+            ctx.beginPath();
+            ctx.moveTo(this.x_padding, 0);
+            ctx.lineTo(this.x_padding, canvas.height);
+            ctx.stroke();
+            ctx.moveTo(canvas.width - this.x_padding, 0);
+            ctx.lineTo(canvas.width - this.x_padding, canvas.height);
+            ctx.stroke();
+            
+            //draws inner this lines
+            for (i = 1; i < this.size; i++)
+            {
+                ctx.moveTo(i * this.x_spacing + this.x_padding, 0);
+                ctx.lineTo(i * this.x_spacing + this.x_padding, canvas.height);
+                ctx.stroke();
+            }
+            for (i = 1; i < this.size; i++)
+            {
+                ctx.moveTo(this.x_padding, i * this.y_spacing);
+                ctx.lineTo(canvas.width - this.x_padding, i * this.y_spacing);
+                ctx.stroke();
+            }
+            
+            //colors the spaces to the left and right of this
+            ctx.fillStyle = "#9932CC";
+            ctx.fillRect(0, 0, this.x_padding, canvas.height)
+            ctx.fillRect(canvas.width - this.x_padding, 0, canvas.width, canvas.height);
+        }
+        
+        //draws all pieces on the canvas
+        this.drawPieces = function()
+        {
+            for (i = 0; i < this.size; i++)
+            {
+                for (j = 0; j < this.size; j++)
+                {
+                    if (this.space[i][j] !== undefined) {
+                        this.space[i][j].draw(this.x_padding + j * this.x_spacing, i * this.y_spacing, this.x_spacing, this.y_spacing);
+                    }
+                }
+            }
+        }
 }
 
 // Takes color code and direction, ex: board.space[1][2] = new Dot("#0000FF", "up")
 function Dot(color, direction){ // color is a hex code, direction is "up", "right", "down", or "left"
 	this.color = color
 	this.direction = direction
+        
+        this.draw = function(x, y, space_width, space_height)
+        {
+            var canvas = document.getElementById('game_canvas');
+            var ctx = canvas.getContext('2d');
+            x += space_width / 2;
+            y += space_height / 2;
+                  
+            ctx.moveTo(x, y);
+            ctx.beginPath();
+            ctx.arc(x, y, Math.min(space_width / 2.5, space_height / 2.5), 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
 }
 
-// Takes a board object and draws a grid for the board (not including dots)
-function drawGrid(board)
-{
-    var canvas = document.getElementById('game_canvas');
-    var ctx = canvas.getContext('2d');
-    
-    //draws lines separating board from sides
-    ctx.beginPath();
-    ctx.moveTo(board.x_padding, 0);
-    ctx.lineTo(board.x_padding, canvas.height);
-    ctx.stroke();
-    ctx.moveTo(canvas.width - board.x_padding, 0);
-    ctx.lineTo(canvas.width - board.x_padding, canvas.height);
-    ctx.stroke();
-    
-    //draws inner board lines
-    for (i = 1; i < board.size; i++)
-    {
-        ctx.moveTo(i * board.x_spacing + board.x_padding, 0);
-        ctx.lineTo(i * board.x_spacing + board.x_padding, canvas.height);
-        ctx.stroke();
-    }
-    for (i = 1; i < board.size; i++)
-    {
-        ctx.moveTo(board.x_padding, i * board.y_spacing);
-        ctx.lineTo(canvas.width - board.x_padding, i * board.y_spacing);
-        ctx.stroke();
-    }
-    
-    //colors the spaces to the left and right of board
-    ctx.fillStyle = "#9932CC";
-    ctx.fillRect(0, 0, board.x_padding, canvas.height)
-    ctx.fillRect(canvas.width - board.x_padding, 0, canvas.width, canvas.height);
-}
