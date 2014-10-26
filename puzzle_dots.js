@@ -1,6 +1,10 @@
 // Global default for board size
 var board_size = 3;
 const dot_size = 3; //increasing number will decrease size of dot
+var canvas = document.getElementById('game_canvas');
+var ctx = canvas.getContext('2d');
+var test =  document.getElementById('demo');
+var levels = 1;
 
 // Executed when page is loaded
 function launch(){
