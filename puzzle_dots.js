@@ -1,6 +1,9 @@
 // Global default for board size
 var board_size = 3;
-const dot_size = 3; //increasing number will decrease size of dot
+
+//percentage of space dot takes up (including arrow) Ex: arrow will touch boundary if 1
+const dot_size = 0.7;
+
 var canvas = document.getElementById('game_canvas');
 var ctx = canvas.getContext('2d');
 var test =  document.getElementById('demo');
@@ -86,8 +89,9 @@ function DEBUG_randomize_board(density){ // density is a number from 0 to 1
 						direction = "left"
 						break;
 				}
-				board.space[i][j] = new Dot(color, direction)
-			}
+                                var radius = dot_size * Math.min(board.x_spacing, board.y_spacing) / 2;
+				board.space[i][j] = new Dot(radius, color, direction);
+                        }
 		}
 	}
 }
@@ -95,9 +99,9 @@ function DEBUG_randomize_board(density){ // density is a number from 0 to 1
 // Board constructor
 function Board(size){ // size is any positive integer
 	this.size = size
-        this.x_padding = document.getElementById('game_canvas').width / 5;   //padding on sides of board 
-        this.x_spacing = (document.getElementById('game_canvas').width - 2 * this.x_padding) / size;   //width of each rectangle on board
-        this.y_spacing = document.getElementById('game_canvas').height / size;   //height of each rectangle on board
+        this.x_padding = canvas.width / 5;   //padding on sides of board 
+        this.x_spacing = (canvas.width - 2 * this.x_padding) / size;   //width of each rectangle on board
+        this.y_spacing = canvas.height / size;   //height of each rectangle on board
 	
 	//Initialize 2D array of spaces
 	this.space = new Array()
@@ -108,9 +112,6 @@ function Board(size){ // size is any positive integer
         //draws auto-scaled grid on the canvas
         this.drawGrid = function()
         {
-            var canvas = document.getElementById('game_canvas');
-            var ctx = canvas.getContext('2d');
-            
             //draws lines separating board from sides
             ctx.beginPath();
             ctx.moveTo(this.x_padding, 0);
@@ -156,7 +157,9 @@ function Board(size){ // size is any positive integer
                 {
                     if (this.space[i][j] !== undefined)  //if the space isn't blank, draw the object
                     {  
-                        this.space[i][j].draw(this.x_padding + j * this.x_spacing, i * this.y_spacing, this.x_spacing, this.y_spacing);
+                        var x = this.x_padding + j * this.x_spacing + this.x_spacing / 2;
+                        var y = i * this.y_spacing + this.y_spacing / 2;
+                        this.space[i][j].draw(x, y);
                     }
                 }
             }
@@ -164,60 +167,54 @@ function Board(size){ // size is any positive integer
 }
 
 // Takes color code and direction, ex: board.space[1][2] = new Dot("#0000FF", "up")
-function Dot(color, direction){ // color is a hex code, direction is "up", "right", "down", or "left"
+function Dot(radius, color, direction){ // color is a hex code, direction is "up", "right", "down", or "left"
+    	this.radius = radius; //distance from center of dot to tip of arrow
 	this.color = color
 	this.direction = direction
         
         // takes a location to be drawn, and the width and height of each board tile and draws the dot
-        this.draw = function(x, y, space_width, space_height)
+        this.draw = function(x, y)
         {
-            var canvas = document.getElementById('game_canvas');
-            var ctx = canvas.getContext('2d');
-            x += space_width / 2;
-            y += space_height / 2;
-            radius = Math.min(space_width / dot_size, space_height / dot_size);
+            circle_radius = this.radius * 0.6;  //leaves 0.4 * radius for arrow
                   
             ctx.fillStyle = this.color;
             ctx.moveTo(x, y);
             ctx.beginPath();
-            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.arc(x, y, circle_radius, 0, 2 * Math.PI);
             ctx.fill();
             
             //draw the arrows
-            distance_to_arrow = Math.min(space_width / 2, space_height / 2);
+            distance_to_arrow = this.radius;
             switch (this.direction)
             {
                 case "down":
-                    ctx.moveTo(x - radius, y);
+                    ctx.moveTo(x - circle_radius, y);
                     ctx.lineTo(x, y + distance_to_arrow);
-                    ctx.lineTo(x + radius, y);
-                    ctx.lineTo(x - radius, y);
+                    ctx.lineTo(x + circle_radius, y);
+                    ctx.lineTo(x - circle_radius, y);
                     ctx.fill();
                     break;
                 case "up":
-                    ctx.moveTo(x - radius, y);
+                    ctx.moveTo(x - circle_radius, y);
                     ctx.lineTo(x, y - distance_to_arrow);
-                    ctx.lineTo(x + radius, y);
-                    ctx.lineTo(x - radius, y);
+                    ctx.lineTo(x + circle_radius, y);
+                    ctx.lineTo(x - circle_radius, y);
                     ctx.fill();
                     break;
                 case "left":
-                    ctx.moveTo(x, y - radius);
+                    ctx.moveTo(x, y - circle_radius);
                     ctx.lineTo(x - distance_to_arrow, y);
-                    ctx.lineTo(x, y + radius);
-                    ctx.lineTo(x, y - radius);
+                    ctx.lineTo(x, y + circle_radius);
+                    ctx.lineTo(x, y - circle_radius);
                     ctx.fill();
                     break;
                 case "right":
-                    ctx.moveTo(x, y - radius);
+                    ctx.moveTo(x, y - circle_radius);
                     ctx.lineTo(x + distance_to_arrow, y);
-                    ctx.lineTo(x, y + radius);
-                    ctx.lineTo(x, y - radius);
+                    ctx.lineTo(x, y + circle_radius);
+                    ctx.lineTo(x, y - circle_radius);
                     ctx.fill();
                     break;
             }
-
-
         }
 }
-
