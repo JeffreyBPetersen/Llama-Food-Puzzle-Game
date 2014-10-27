@@ -17,29 +17,43 @@ function launch(){
         document.addEventListener('click', mouseClick, false);
 }
 
+// future use for moving dots and clicking spaces?
+function getPosition(e)
+{
+    var x = e.x;
+    var y = e.y;
+
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
+
+    x = x - window.pageXOffset;
+    y = y + window.pageYOffset;
+
+    test.innerHTML = "x:" + x + " y:" + y; 
+    
+}
+
 // arrow keys control
-function keyHandler(){
-  var keyCode = event.keyCode;
-      if (keyCode == 37) {
-        test.innerHTML = "left";
-      }
-
-      if (keyCode == 38) {
-        test.innerHTML = "up";
-      }
-
-      if (keyCode == 39) {
-        test.innerHTML = "right";
-      }
-
-      if (keyCode == 40) {
-        test.innerHTML = "down";
-      }
+function keyHandler(event){
+    switch(event.keyCode){
+        case 87: /* w is up */
+            test.innerHTML = "w is up";
+            break;
+        case 83: /* s to move down */
+            test.innerHTML = "s is down";
+            break;
+        case 65: /* a to move left */
+            test.innerHTML = "a is left";
+            break;
+        case 68: /* d to move right */
+            test.innerHTML = "d is right";
+            break;
+    }
 }
 
 // mouse clicks 
-function mouseClick(event){
-    test.innerHTML = "Click";
+function mouseClick(e){
+    getPosition(e);
 }
 
 function DEBUG_randomize_board(density){ // density is a number from 0 to 1
