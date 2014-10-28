@@ -12,7 +12,7 @@ var ctx = canvas.getContext('2d');
 var board_size = 3;
 
 // Define dot size as a percentage of square size
-var dot_size = 0.6;
+var dot_size = 0.8;
 
 // Game launch method
 function launch () {
@@ -83,16 +83,16 @@ function Board (size) {
 		ctx.beginPath();
 
 		// Draw vertical lines
-		for (var i = 0; i <= board.size; i++) {
-			ctx.moveTo(i * board.x_spacing + board.x, 0);
-			ctx.lineTo(i * board.x_spacing + board.x, board.height);
+		for (var i = 0; i <= this.size; i++) {
+			ctx.moveTo(i * this.x_spacing + this.x, 0);
+			ctx.lineTo(i * this.x_spacing + this.x, this.height);
 			ctx.stroke();
 		}
 
 		// Draw horizontal lines
-		for (var i = 0; i <= board.size; i++) {
-			ctx.moveTo(board.x, i * board.y_spacing);
-			ctx.lineTo(board.width, i * board.y_spacing);
+		for (var i = 0; i <= this.size; i++) {
+			ctx.moveTo(this.x, i * this.y_spacing);
+			ctx.lineTo(this.width, i * this.y_spacing);
 			ctx.stroke();
 		}
 	}
@@ -177,18 +177,19 @@ function Dot (radius, color, direction) {
 		
 		// Draw circle
 		ctx.beginPath();
+		c_radius = this.radius * 0.66;
 		ctx.fillStyle = this.color;
 		ctx.moveTo(x, y);
-		ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
+		ctx.arc(x, y, c_radius, 0, 2 * Math.PI);
 		ctx.fill();
 		
 		// Draw arrow
 		ctx.beginPath();
 		ctx.fillStyle = "#000000";
-		var point = this.radius * 1.5;
-		var in_point = this.radius * 0.4;
-		var base_width = this.radius * 0.6;
-		var base_offset = this.radius * 0.2;
+		var point = c_radius * 1.5;
+		var in_point = c_radius * 0.4;
+		var base_width = c_radius * 0.6;
+		var base_offset = c_radius * 0.2;
 		switch (this.direction) {
 			case "up":
 				ctx.moveTo(x - base_width, y - base_offset);
