@@ -30,6 +30,27 @@ function launch () {
 
 	// Draw the game UI
 	drawUI();
+	
+	// Initialize keyHandler
+	document.addEventListener('keydown', keyHandler, true);
+}
+
+// KeyHandler
+function keyHandler (event) {
+	switch (event.keyCode) {
+		case 87:
+			// w is up
+			break;
+		case 83:
+			// s is down
+			break;
+		case 65:
+			// a is left
+			break;
+		case 68:
+			// d is right
+			break;
+	}
 }
 
 /** Board object **/
