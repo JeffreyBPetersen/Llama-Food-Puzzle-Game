@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head> 
-<style>
-   body {
-        margin: 14px;
-   }
-</style>
-<title> Puzzle Dots </title>
-<p id="demo">Use WASD and mouse.</p>
-<p><a href="rules.html">How to Play</a></p>	
+<head>
+<meta charset="UTF-8">
+<title>Puzzle Dots Game</title>
+<link rel="stylesheet" href="puzzle_dots.css">
 </head>
-<body onload = "launch()">
-<canvas id="game_canvas" width="720" height="480" style="border:1px solid #000000;">
+
+<!-- My body is ready -->
+<body onload ="launch()">
+
+<!-- Game canvas -->
+<canvas class="game" id="game_canvas" width="800" height="480">
 </canvas>
-<script src="puzzle_dots.js" type="text/javascript"></script>
+
+<!-- Game script -->
+<script src="puzzle_dots.js"></script>
+
 </body>
 </html>

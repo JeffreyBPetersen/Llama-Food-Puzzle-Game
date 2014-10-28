@@ -1,0 +1,20 @@
+/*
+* Puzzle game stylesheet.
+*/
+
+/* CSS Global Reset */
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	margin: 0 auto;
+	padding: 10px;
+}
+
+canvas.game {
+	display: block;
+	margin: 0 auto;
+	border: 1px solid #000000;
+}

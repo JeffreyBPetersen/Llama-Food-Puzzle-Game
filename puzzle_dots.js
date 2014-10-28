@@ -1,220 +1,214 @@
-// Global default for board size
-var board_size = 3;
+/**
+	Puzzle Dots: A game for llamas everywhere!
+	Team: Adam, Connor, Jeff, Vanda
+	
+**/
 
-//percentage of space dot takes up (including arrow) Ex: arrow will touch boundary if 1
-const dot_size = 0.7;
-
+// Global canvas and context variables
 var canvas = document.getElementById('game_canvas');
 var ctx = canvas.getContext('2d');
-var test =  document.getElementById('demo');
-var levels = 1;
 
-// Executed when page is loaded
-function launch(){
-	board = new Board(board_size)
-        board.drawGrid();
-        
-        DEBUG_randomize_board(.3);
-        board.drawPieces();
-        document.addEventListener('keydown', keyHandler, true);
-        document.addEventListener('click', mouseClick, false);
+// Define a size x size grid
+var board_size = 3;
+
+// Define dot size as a percentage of square size
+var dot_size = 0.6;
+
+// Game launch method
+function launch () {
+	// Make a board object
+	board = new Board(board_size);
+	
+	// Populate board spaces
+	board.populate(0.3);
+	
+	// Draw the board grid
+	board.drawGrid();
+	
+	// Draw board pieces
+	board.drawPieces();
+
+	// Draw the game UI
+	drawUI();
 }
 
-// future use for moving dots and clicking spaces?
-function getPosition(e)
-{
-    var x = e.x;
-    var y = e.y;
+/** Board object **/
+function Board (size) {
+	// Board x and y origin
+	this.x = (canvas.width - canvas.height) / 2;
+	this.y = 0;
 
-    x -= canvas.offsetLeft;
-    y -= canvas.offsetTop;
+	// Board width and height from its origin
+	this.height = canvas.height;
+	this.width = this.x + this.height;
 
-    x = x - window.pageXOffset;
-    y = y + window.pageYOffset;
+	// Set board size
+	this.size = size;
 
-    test.innerHTML = "x:" + x + " y:" + y; 
-    
-}
+	// Board square width
+	this.x_spacing = this.height / size;
 
-// arrow keys control
-function keyHandler(event){
-    switch(event.keyCode){
-        case 87: /* w is up */
-            test.innerHTML = "w is up";
-            break;
-        case 83: /* s to move down */
-            test.innerHTML = "s is down";
-            break;
-        case 65: /* a to move left */
-            test.innerHTML = "a is left";
-            break;
-        case 68: /* d to move right */
-            test.innerHTML = "d is right";
-            break;
-    }
-}
+	// Board square height
+	this.y_spacing = this.height / size;
 
-// mouse clicks 
-function mouseClick(e){
-    getPosition(e);
-}
+	// Initialize 2D array of spaces
+	this.space = new Array();
+	for (var i = 0; i < size; i++) {
+		this.space[i] = new Array();
+	}
+	
+	// Board grid draw method
+	this.drawGrid = function () {
+		ctx.beginPath();
 
-function DEBUG_randomize_board(density){ // density is a number from 0 to 1
-	for(var i = 0; i < board.size; i++){
-		for(var j = 0; j < board.size; j++){
-			if(Math.random() < density){
-				var color, direction;
-				switch(Math.floor(Math.random() * 3)){
-					case 0:
-						color = "#FF0000"
+		// Draw vertical lines
+		for (var i = 0; i <= board.size; i++) {
+			ctx.moveTo(i * board.x_spacing + board.x, 0);
+			ctx.lineTo(i * board.x_spacing + board.x, board.height);
+			ctx.stroke();
+		}
+
+		// Draw horizontal lines
+		for (var i = 0; i <= board.size; i++) {
+			ctx.moveTo(board.x, i * board.y_spacing);
+			ctx.lineTo(board.width, i * board.y_spacing);
+			ctx.stroke();
+		}
+	}
+	
+	// Board pieces draw method
+	this.drawPieces = function () {
+		// space[0][0] x and y center
+		var x_center = this.x + this.x_spacing / 2;
+		var y_center = this.y + this.y_spacing / 2;
+		
+		for (var i = 0; i < this.size; i++) {
+			for (var j = 0; j < this.size; j++) {
+				var dot = this.space[i][j];
+				if (dot !== undefined) {				
+					dot.draw(x_center + this.x_spacing * i,
+							 y_center + this.y_spacing * j);
+				}
+			}
+		}		
+	}
+	
+	// Board populate method
+	this.populate = function (density) {
+		for (var i = 0; i < this.size; i++) {
+			for (var j = 0; j < this.size; j++) {
+				if (Math.random() < density) {
+					var color, direction;
+					switch (Math.floor(Math.random() * 3)) {
+						case 0:
+						color = "#FF0000";
 						break
-					case 1:
-						color = "#00FF00"
+						case 1:
+						color = "#00FF00";
 						break;
-					case 2:
-						color = "#0000FF"
+						case 2:
+						color = "#0000FF";
 						break;
+					}
+					switch (Math.floor(Math.random() * 4)) {
+						case 0:
+						direction = "up";
+						break;
+						case 1:
+						direction = "down";
+						break;
+						case 2:
+						direction = "left";
+						break;
+						case 3:
+						direction = "right";
+						break;
+					}
+					var radius = (this.x_spacing / 2) * dot_size;
+					var dot = new Dot(radius, color, direction);
+					this.space[i][j] = dot;
 				}
-				switch(Math.floor(Math.random() * 4)){
-					case 0:
-						direction = "up"
-						break;
-					case 1:
-						direction = "right"
-						break;
-					case 2:
-						direction = "down"
-						break;
-					case 3:
-						direction = "left"
-						break;
-				}
-                                var radius = dot_size * Math.min(board.x_spacing, board.y_spacing) / 2;
-				board.space[i][j] = new Dot(radius, color, direction);
-                        }
+			}
 		}
 	}
 }
 
-// Board constructor
-function Board(size){ // size is any positive integer
-	this.size = size
-        this.x_padding = canvas.width / 5;   //padding on sides of board 
-        this.x_spacing = (canvas.width - 2 * this.x_padding) / size;   //width of each rectangle on board
-        this.y_spacing = canvas.height / size;   //height of each rectangle on board
+/** Dot object **/
+function Dot (radius, color, direction) {
+	// Dot x and y origin
+	this.x;
+	this.y;
 	
-	//Initialize 2D array of spaces
-	this.space = new Array()
-	for(var i = 0; i < size; i++){
-		this.space[i] = new Array()
+	// Dot radius
+	this.radius = radius;
+	
+	// Color hex code
+	this.color = color;
+
+	// up, down, left, or right
+	this.direction = direction;
+	
+	// Dot draw method
+	this.draw = function (x, y) {
+		// Update dot position
+		this.x = x;
+		this.y = y;
+		
+		// Draw circle
+		ctx.beginPath();
+		ctx.fillStyle = this.color;
+		ctx.moveTo(x, y);
+		ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
+		ctx.fill();
+		
+		// Draw arrow
+		ctx.beginPath();
+		ctx.fillStyle = "#000000";
+		var point = this.radius * 1.5;
+		var in_point = this.radius * 0.4;
+		var base_width = this.radius * 0.6;
+		var base_offset = this.radius * 0.2;
+		switch (this.direction) {
+			case "up":
+				ctx.moveTo(x - base_width, y - base_offset);
+				ctx.lineTo(x, y - point);
+				ctx.lineTo(x + base_width, y - base_offset);
+				ctx.lineTo(x, y - in_point);
+				ctx.lineTo(x - base_width, y - base_offset);
+				ctx.fill();
+				break;
+			case "down":
+				ctx.moveTo(x - base_width, y + base_offset);
+				ctx.lineTo(x, y + point);
+				ctx.lineTo(x + base_width, y + base_offset);
+				ctx.lineTo(x, y + in_point);
+				ctx.lineTo(x - base_width, y + base_offset);
+				ctx.fill();
+				break;
+			case "left":
+				ctx.moveTo(x - base_offset, y - base_width);
+				ctx.lineTo(x - point, y);
+				ctx.lineTo(x - base_offset, y + base_width);
+				ctx.lineTo(x - in_point, y);
+				ctx.lineTo(x - base_offset, y - base_width);
+				ctx.fill();
+				break;
+			case "right":
+				ctx.moveTo(x + base_offset, y - base_width);
+				ctx.lineTo(x + point, y);
+				ctx.lineTo(x + base_offset, y + base_width);
+				ctx.lineTo(x + in_point, y);
+				ctx.lineTo(x + base_offset, y - base_width);
+				ctx.fill();
+				break;
+		}
 	}
-        
-        //draws auto-scaled grid on the canvas
-        this.drawGrid = function()
-        {
-            //draws lines separating board from sides
-            ctx.beginPath();
-            ctx.moveTo(this.x_padding, 0);
-            ctx.lineTo(this.x_padding, canvas.height);
-            ctx.stroke();
-            ctx.moveTo(canvas.width - this.x_padding, 0);
-            ctx.lineTo(canvas.width - this.x_padding, canvas.height);
-            ctx.stroke();
-            
-            //draws inner this lines
-            for (i = 1; i < this.size; i++)
-            {
-                ctx.moveTo(i * this.x_spacing + this.x_padding, 0);
-                ctx.lineTo(i * this.x_spacing + this.x_padding, canvas.height);
-                ctx.stroke();
-            }
-            for (i = 1; i < this.size; i++)
-            {
-                ctx.moveTo(this.x_padding, i * this.y_spacing);
-                ctx.lineTo(canvas.width - this.x_padding, i * this.y_spacing);
-                ctx.stroke();
-            }
-            
-            //colors the spaces to the left and right of this
-            ctx.fillStyle = "#9932CC";
-            ctx.fillRect(0, 0, this.x_padding, canvas.height)
-            ctx.fillRect(canvas.width - this.x_padding, 0, canvas.width, canvas.height);
-            
-            //show Level
-            ctx.fillStyle = "white";
-            ctx.font = "20px Helvetica";
-            ctx.textAlign = "left";
-            ctx.textBaseline = "top";
-            ctx.fillText("Level " + levels, 32, 32);
-        }
-        
-        //draws all pieces to the canvas
-        this.drawPieces = function()
-        {
-            for (i = 0; i < this.size; i++)
-            {
-                for (j = 0; j < this.size; j++)
-                {
-                    if (this.space[i][j] !== undefined)  //if the space isn't blank, draw the object
-                    {  
-                        var x = this.x_padding + j * this.x_spacing + this.x_spacing / 2;
-                        var y = i * this.y_spacing + this.y_spacing / 2;
-                        this.space[i][j].draw(x, y);
-                    }
-                }
-            }
-        }
 }
 
-// Takes color code and direction, ex: board.space[1][2] = new Dot("#0000FF", "up")
-function Dot(radius, color, direction){ // color is a hex code, direction is "up", "right", "down", or "left"
-    	this.radius = radius; //distance from center of dot to tip of arrow
-	this.color = color
-	this.direction = direction
-        
-        // takes a location to be drawn, and the width and height of each board tile and draws the dot
-        this.draw = function(x, y)
-        {
-            circle_radius = this.radius * 0.6;  //leaves 0.4 * radius for arrow
-                  
-            ctx.fillStyle = this.color;
-            ctx.moveTo(x, y);
-            ctx.beginPath();
-            ctx.arc(x, y, circle_radius, 0, 2 * Math.PI);
-            ctx.fill();
-            
-            //draw the arrows
-            distance_to_arrow = this.radius;
-            switch (this.direction)
-            {
-                case "down":
-                    ctx.moveTo(x - circle_radius, y);
-                    ctx.lineTo(x, y + distance_to_arrow);
-                    ctx.lineTo(x + circle_radius, y);
-                    ctx.lineTo(x - circle_radius, y);
-                    ctx.fill();
-                    break;
-                case "up":
-                    ctx.moveTo(x - circle_radius, y);
-                    ctx.lineTo(x, y - distance_to_arrow);
-                    ctx.lineTo(x + circle_radius, y);
-                    ctx.lineTo(x - circle_radius, y);
-                    ctx.fill();
-                    break;
-                case "left":
-                    ctx.moveTo(x, y - circle_radius);
-                    ctx.lineTo(x - distance_to_arrow, y);
-                    ctx.lineTo(x, y + circle_radius);
-                    ctx.lineTo(x, y - circle_radius);
-                    ctx.fill();
-                    break;
-                case "right":
-                    ctx.moveTo(x, y - circle_radius);
-                    ctx.lineTo(x + distance_to_arrow, y);
-                    ctx.lineTo(x, y + circle_radius);
-                    ctx.lineTo(x, y - circle_radius);
-                    ctx.fill();
-                    break;
-            }
-        }
+// Game UI draw method
+function drawUI () {
+	// UI background color
+	ctx.fillStyle = "#969696";
+	ctx.fillRect(0, 0, board.x, canvas.height);
+	ctx.fillRect(board.width, 0, canvas.width, canvas.height);
 }
