@@ -4,20 +4,43 @@
 	
 **/
 
+function Game(){ // constructor for game object
+	this.board_size = 3 // size of board, NOTE: constant to be replaced with level specification later
+	this.board = new Board(board_size) // initialize board
+}
+
+function Gfx(){ // constructor for gfx object
+	this.canvas = document.getElementById('game_canvas')
+	this.ctx = ctx = canvas.getContext('2d')
+	this.dot_size = 0.8 // dot size ratio to board square size
+}
+
+function Gui(){ //constructor for gui object
+}
+
+function init(){
+	game = new Game() //Initialize game object
+	gfx = new Gfx() //Initialize gfx object
+	gui = new Gui() //Initialize gui object
+}
+
+function tick(){
+}
+
 // Global canvas and context variables
-var canvas = document.getElementById('game_canvas');
-var ctx = canvas.getContext('2d');
+var canvas = document.getElementById('game_canvas'); //NOTE: moved to gfx object
+var ctx = canvas.getContext('2d'); //NOTE: moved to gfx object
 
 // Define a size x size grid
-var board_size = 3;
+var board_size = 3; //NOTE: moved to game object
 
 // Define dot size as a percentage of square size
-var dot_size = 0.8;
+var dot_size = 0.8; //NOTE: moved to gfx object
 
 // Game launch method
 function launch () {
 	// Make a board object
-	board = new Board(board_size);
+	board = new Board(board_size); //NOTE: moved to game object
 	
 	// Populate board spaces
 	board.populate(0.3);
