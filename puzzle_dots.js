@@ -33,6 +33,12 @@ function launch () {
 	
 	// Initialize keyHandler
 	document.addEventListener('keydown', keyHandler, true);
+    
+    // make GameLoop object
+	//game = new GameLoop();
+
+	// Start loop
+	//game.puzzleLoop();
 }
 
 // KeyHandler
@@ -234,3 +240,42 @@ function drawUI () {
 	ctx.fillRect(0, 0, board.x, canvas.height);
 	ctx.fillRect(board.width, 0, canvas.width, canvas.height);
 }
+
+/* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
+function GameLoop() {
+
+	this.update = function() {
+		// Update stuff and game logic.
+	}
+
+	this.render = function() {
+		// Animates dots.
+	}
+
+	this.puzzleLoop = function() {
+	    var last = Date.now(); 
+	    // frame rate, fps = 60
+	    var frameRate = 1000/60; 
+
+		function loop() {
+			// Calculate time elapsed since last frame.
+			var now = Date.now();
+			var elapsed = now - last;
+			last = now;
+
+			// request the next frame
+			window.requestAnimationFrame(loop); 
+			
+			// Update frames when elapsed is >= frame
+			while(elapsed >= frameRate){
+				elapsed = elapsed - frameRate;
+				this.update();
+			}
+
+			this.render();		
+		}
+
+		loop();
+	}
+}
+
