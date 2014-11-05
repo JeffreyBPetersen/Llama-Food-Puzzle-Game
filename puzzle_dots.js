@@ -14,19 +14,23 @@ var board_size = 3;
 // Define dot size as a percentage of square size
 var dot_size = 0.8;
 
+var board;
+var gfx;
+
 // Game launch method
 function launch () {
 	// Make a board object
 	board = new Board(board_size);
+	gfx = new graphics();
 	
 	// Populate board spaces
 	board.populate(0.3);
 	
 	// Draw the board grid
-	board.drawGrid();
+	gfx.drawGrid();
 	
 	// Draw board pieces
-	board.drawPieces();
+	gfx.drawPieces();
 
 	// Draw the game UI
 	drawUI();
@@ -84,41 +88,7 @@ function Board (size) {
 		this.space[i] = new Array();
 	}
 	
-	// Board grid draw method
-	this.drawGrid = function () {
-		ctx.beginPath();
 
-		// Draw vertical lines
-		for (var i = 0; i <= this.size; i++) {
-			ctx.moveTo(i * this.x_spacing + this.x, 0);
-			ctx.lineTo(i * this.x_spacing + this.x, this.height);
-			ctx.stroke();
-		}
-
-		// Draw horizontal lines
-		for (var i = 0; i <= this.size; i++) {
-			ctx.moveTo(this.x, i * this.y_spacing);
-			ctx.lineTo(this.width, i * this.y_spacing);
-			ctx.stroke();
-		}
-	}
-	
-	// Board pieces draw method
-	this.drawPieces = function () {
-		// space[0][0] x and y center
-		var x_center = this.x + this.x_spacing / 2;
-		var y_center = this.y + this.y_spacing / 2;
-		
-		for (var i = 0; i < this.size; i++) {
-			for (var j = 0; j < this.size; j++) {
-				var dot = this.space[i][j];
-				if (dot !== undefined) {				
-					dot.draw(x_center + this.x_spacing * i,
-							 y_center + this.y_spacing * j);
-				}
-			}
-		}		
-	}
 	
 	// Board populate method
 	this.populate = function (density) {
@@ -279,3 +249,55 @@ function GameLoop() {
 	}
 }
 
+function graphics() {
+	var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+	
+	// Board x and y origin
+	var board_x = (canvas.width - canvas.height) / 2;
+	var board_y = 0;
+
+	// length of each side of board
+	var board_side = canvas.height;
+
+	//draws the board.size X board.size grid (not including pieces)
+	this.drawGrid = function() {
+		var space_side = board_side / board.size;
+		ctx.beginPath();
+		
+		// Draw vertical lines
+		for (var i = 0; i <= board.size; i++) {
+			ctx.moveTo(i * space_side + board_x, 0);
+			ctx.lineTo(i * space_side + board_x, board_side);
+			ctx.stroke();
+		}
+
+		// Draw horizontal lines
+		for (var i = 0; i <= board.size; i++) {
+			ctx.moveTo(board_x, i * space_side);
+			ctx.lineTo(board_x + board_side, i * space_side);
+			ctx.stroke();
+		}
+	}
+	
+	this.drawPieces = function() {
+		var space_side = board_side / board.size;
+		
+		for (var i = 0; i < board.size; i++) {
+			for (var j = 0; j < board.size; j++) {
+				var dot = board.space[i][j];
+				if (dot !== undefined) {				
+					dot.draw((board_x + space_side / 2) + space_side * i,
+							 (board_y + space_side / 2) + space_side * j);
+				}
+			}
+		}	
+	}
+	
+	//TODO
+	this.drawDot = function(dot, x, y) {
+		var space_side = board_side / board.size;
+		var radius = space_side / 2 * dot_size;
+		//incomplete
+	}
+}
