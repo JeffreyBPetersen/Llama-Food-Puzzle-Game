@@ -6,6 +6,28 @@
 
 // constructor for game object
 function Game(){
+	// variable for board
+	// initialize when level is launched
+	var board
+	
+	// constructor for board object
+	// size is >= 2
+	this.Board = function(size){
+		this.size = size
+		
+		this.space = new Array()
+		for(var i = 0; i < size; i++){
+			this.space[i] = new Array()
+		}
+	}
+	
+	// constructor for dot object
+	// color is one of ["blue", "green", "orange", "purple", "red", "yellow"]
+	// direction is one of ["down", "left", "right", "up"]
+	this.Dot = function(color, direction){
+		this.color = color
+		this.direction = direction
+	}
 }
 
 // constructor for gui object
