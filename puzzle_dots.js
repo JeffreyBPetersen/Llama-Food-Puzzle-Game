@@ -7,26 +7,48 @@
 // constructor for game object
 function Game(){
 	// variable for board
+	// contains positions of pieces and goals
 	// initialize when level is launched
-	var board
+	this.board = null
+	
+	this.color_enum = {
+		"red" : 0,
+		"orange" : 1,
+		"yellow" : 2,
+		"green" : 3,
+		"blue" : 4,
+		"purple" : 5
+	}
 	
 	// constructor for board object
 	// size is >= 2
 	this.Board = function(size){
 		this.size = size
 		
+		this.goal = new Array()
 		this.space = new Array()
 		for(var i = 0; i < size; i++){
+			this.goal[i] = new Array()
 			this.space[i] = new Array()
 		}
 	}
 	
 	// constructor for dot object
-	// color is one of ["blue", "green", "orange", "purple", "red", "yellow"]
+	// color is a string from color_enum
 	// direction is one of ["down", "left", "right", "up"]
 	this.Dot = function(color, direction){
 		this.color = color
 		this.direction = direction
+	}
+	
+	// constructor for goal object
+	// color is a string from color_enum
+	this.Goal = function(color){
+		this.color = color
+	}
+	
+	this.blend = function(dot_a, dot_b){
+		// ADD: implementation of blending
 	}
 }
 
@@ -90,6 +112,13 @@ function graphics() {
 
 // initialize all necessary objects
 function init(){
+	game = new Game()
+	board_size = 3 // DEBUG: placeholder
+	game.board = new game.Board(board_size)
+	
+	gui = new Gui()
+	
+	gfx = new graphics()
 }
 
 // Global canvas and context variables
