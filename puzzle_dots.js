@@ -4,6 +4,72 @@
 	
 **/
 
+// constructor for game object
+function Game(){
+}
+
+// constructor for gui object
+function Gui(){
+}
+
+// constructor for gfx object
+function graphics() {
+	var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+	
+	// Board x and y origin
+	var board_x = (canvas.width - canvas.height) / 2;
+	var board_y = 0;
+
+	// length of each side of board
+	var board_side = canvas.height;
+
+	//draws the board.size X board.size grid (not including pieces)
+	this.drawGrid = function() {
+		var space_side = board_side / board.size;
+		ctx.beginPath();
+		
+		// Draw vertical lines
+		for (var i = 0; i <= board.size; i++) {
+			ctx.moveTo(i * space_side + board_x, 0);
+			ctx.lineTo(i * space_side + board_x, board_side);
+			ctx.stroke();
+		}
+
+		// Draw horizontal lines
+		for (var i = 0; i <= board.size; i++) {
+			ctx.moveTo(board_x, i * space_side);
+			ctx.lineTo(board_x + board_side, i * space_side);
+			ctx.stroke();
+		}
+	}
+	
+	this.drawPieces = function() {
+		var space_side = board_side / board.size;
+		
+		for (var i = 0; i < board.size; i++) {
+			for (var j = 0; j < board.size; j++) {
+				var dot = board.space[i][j];
+				if (dot !== undefined) {				
+					dot.draw((board_x + space_side / 2) + space_side * i,
+							 (board_y + space_side / 2) + space_side * j);
+				}
+			}
+		}	
+	}
+	
+	//TODO
+	this.drawDot = function(dot, x, y) {
+		var space_side = board_side / board.size;
+		var radius = space_side / 2 * dot_size;
+		//incomplete
+	}
+}
+
+// initialize all necessary objects
+function init(){
+}
+
 // Global canvas and context variables
 var canvas = document.getElementById('game_canvas');
 var ctx = canvas.getContext('2d');
@@ -246,58 +312,5 @@ function GameLoop() {
 		}
 
 		loop();
-	}
-}
-
-function graphics() {
-	var canvas = document.getElementById('game_canvas');
-	var ctx = canvas.getContext('2d');
-	
-	// Board x and y origin
-	var board_x = (canvas.width - canvas.height) / 2;
-	var board_y = 0;
-
-	// length of each side of board
-	var board_side = canvas.height;
-
-	//draws the board.size X board.size grid (not including pieces)
-	this.drawGrid = function() {
-		var space_side = board_side / board.size;
-		ctx.beginPath();
-		
-		// Draw vertical lines
-		for (var i = 0; i <= board.size; i++) {
-			ctx.moveTo(i * space_side + board_x, 0);
-			ctx.lineTo(i * space_side + board_x, board_side);
-			ctx.stroke();
-		}
-
-		// Draw horizontal lines
-		for (var i = 0; i <= board.size; i++) {
-			ctx.moveTo(board_x, i * space_side);
-			ctx.lineTo(board_x + board_side, i * space_side);
-			ctx.stroke();
-		}
-	}
-	
-	this.drawPieces = function() {
-		var space_side = board_side / board.size;
-		
-		for (var i = 0; i < board.size; i++) {
-			for (var j = 0; j < board.size; j++) {
-				var dot = board.space[i][j];
-				if (dot !== undefined) {				
-					dot.draw((board_x + space_side / 2) + space_side * i,
-							 (board_y + space_side / 2) + space_side * j);
-				}
-			}
-		}	
-	}
-	
-	//TODO
-	this.drawDot = function(dot, x, y) {
-		var space_side = board_side / board.size;
-		var radius = space_side / 2 * dot_size;
-		//incomplete
 	}
 }
