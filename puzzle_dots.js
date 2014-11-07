@@ -17,7 +17,13 @@ function Game(){
 		"yellow" : 2,
 		"green" : 3,
 		"blue" : 4,
-		"purple" : 5
+		"purple" : 5,
+		0: "red",
+		1: "orange",
+		2: "yellow",
+		3: "green",
+		4: "blue",
+		5: "purple"
 	}
 	
 	// constructor for board object
@@ -47,9 +53,36 @@ function Game(){
 		this.color = color
 	}
 	
+	// blending function for when dot_a moved into dot_b
+	// takes dot objects dot_a and dot_b
+	// returns blended dot or null for mutually destructive blending
 	this.blend = function(dot_a, dot_b){
-		// ADD: implementation of blending
+		// case for destructive blending
+		if((this.color_enum[dot_a.color] + 3) % 6 == this.color_enum[dot_b.color])
+			return null
+		// 1st case for standard blending
+		else if((this.color_enum[dot_a.color] + 2) % 6 == this.color_enum[dot_b.color])
+			return new this.Dot(this.color_enum[(this.color_enum[dot_a.color] + 1) % 6], 
+			dot_a.direction)
+		// 2nd case for standard blending
+		else if((this.color_enum[dot_a.color] + 4) % 6 == this.color_enum[dot_b.color])
+			return new this.Dot(this.color_enum[(this.color_enum[dot_a.color] + 5) % 6], 
+			dot_a.direction)
+		// case for dominant blending
+		else
+			return new this.Dot(dot_a.color, dot_a.direction)
 	}
+}
+
+// debug function for working on game object, prone to change as needed
+function debug_game(){
+	game = new Game()
+	d0 = new game.Dot("red", "up")
+	d1 = new game.Dot("orange", "right")
+	d2 = new game.Dot("yellow", "down")
+	d3 = new game.Dot("green", "left")
+	d4 = new game.Dot("blue", "up")
+	d5 = new game.Dot("purple", "right")
 }
 
 // constructor for gui object
