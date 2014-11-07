@@ -1,0 +1,36 @@
+Puzzle Dots Rules
+
+Start
+	A starting arrangement of dots and colored board spaces is given
+
+Each Turn
+	Input
+		Select a color
+			Blue
+			Red
+			Yellow
+
+		Select a move
+			Turn
+				Left
+				Right
+			Move Forward
+	Logic
+		Movement
+			Each dot of the chosen color and derivative colors makes the chosen move.
+				Blue/Green/Purple, Red/Orange/Purple, Yellow/Green/Orange
+			Moving dots will not move if they would collide with each other.
+			Moving dots will move into and blend with unmoving dots.
+		Blending
+			Primary colors mix into secondary colors
+				Blue/Red = Purple, Blue/Yellow = Green, Red/Yellow = Orange
+			Secondary colors mix into primary colors
+				Green/Orange = Yellow, Green/Purple = Blue, Orange/Purple = Red
+			Blended dots have the direction of the dot which moved last
+			Primary and secondary combinations
+				Destructive combinations leave a blank space
+					Blue/Orange, Red/Green, Yellow/Purple
+				Redundant combinations leave the dot which moved
+					Blue/Green, Blue/Purple, Red/Orange, Red/Purple, Yellow/Green, Yellow/Orange
+		Winning
+			All dots are on a matching color board space

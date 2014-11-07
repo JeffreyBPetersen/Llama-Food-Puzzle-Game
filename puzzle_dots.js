@@ -13,9 +13,28 @@ function Gfx(){ // constructor for gfx object
 	this.canvas = document.getElementById('game_canvas')
 	this.ctx = ctx = canvas.getContext('2d')
 	this.dot_size = 0.8 // dot size ratio to board square size
+	this.board_x = (canvas.width - canvas.height) / 2;
+	this.board_y = 0;
 }
 
 function Gui(){ //constructor for gui object
+	document.addEventListener('keydown', keyHandler, true);
+	this.keyHandler = function (event) {
+		switch (event.keyCode) {
+			case 87:
+				// w is up
+				break;
+			case 83:
+				// s is down
+				break;
+			case 65:
+				// a is left
+				break;
+			case 68:
+				// d is right
+				break;
+		}
+	}
 }
 
 function init(){
@@ -55,11 +74,11 @@ function launch () {
 	drawUI();
 	
 	// Initialize keyHandler
-	document.addEventListener('keydown', keyHandler, true);
+	document.addEventListener('keydown', keyHandler, true); //NOTE: moved to gui object
 }
 
 // KeyHandler
-function keyHandler (event) {
+function keyHandler (event) { //NOTE: moved to gui object
 	switch (event.keyCode) {
 		case 87:
 			// w is up
@@ -79,8 +98,8 @@ function keyHandler (event) {
 /** Board object **/
 function Board (size) {
 	// Board x and y origin
-	this.x = (canvas.width - canvas.height) / 2;
-	this.y = 0;
+	this.x = (canvas.width - canvas.height) / 2; //NOTE: moved to gfx.board_x
+	this.y = 0; //NOTE: moved to gfx.board_y
 
 	// Board width and height from its origin
 	this.height = canvas.height;
