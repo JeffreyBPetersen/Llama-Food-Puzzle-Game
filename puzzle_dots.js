@@ -100,6 +100,13 @@ function graphics() {
 
 	// length of each side of board
 	var board_side = canvas.height;
+	var ui_width = (canvas.width - board_side) / 2;
+	
+	this.drawUI = function() {
+		ctx.fillStyle = "#969696";
+		ctx.fillRect(0, 0, ui_width, canvas.height);
+		ctx.fillRect(ui_width + board_side, 0, canvas.width, canvas.height);
+	}
 
 	//draws the board.size X board.size grid (not including pieces)
 	this.drawGrid = function() {
@@ -121,25 +128,73 @@ function graphics() {
 		}
 	}
 	
+	// Takes a dot object and x,y location to draw
+	this.drawDot = function(dot, x, y) {
+		var space_side = board_side / board.size;
+		var radius = space_side / 2 * dot_size;
+		var c_radius = radius * 0.66;
+		
+		//draw circle
+		ctx.fillStyle = dot.color;
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		ctx.arc(x, y, c_radius, 0, 2 * Math.PI);
+		ctx.fill();
+		
+		//draw arrow
+		ctx.fillStyle = "#000000";
+		ctx.beginPath();
+		var point = c_radius * 1.5;
+		var in_point = c_radius * 0.4;
+		var base_width = c_radius * 0.6;
+		var base_offset = c_radius * 0.2;
+		switch (dot.direction) {
+			case "up":
+				ctx.moveTo(x - base_width, y - base_offset);
+				ctx.lineTo(x, y - point);
+				ctx.lineTo(x + base_width, y - base_offset);
+				ctx.lineTo(x, y - in_point);
+				ctx.lineTo(x - base_width, y - base_offset);
+				ctx.fill();
+				break;
+			case "down":
+				ctx.moveTo(x - base_width, y + base_offset);
+				ctx.lineTo(x, y + point);
+				ctx.lineTo(x + base_width, y + base_offset);
+				ctx.lineTo(x, y + in_point);
+				ctx.lineTo(x - base_width, y + base_offset);
+				ctx.fill();
+				break;
+			case "left":
+				ctx.moveTo(x - base_offset, y - base_width);
+				ctx.lineTo(x - point, y);
+				ctx.lineTo(x - base_offset, y + base_width);
+				ctx.lineTo(x - in_point, y);
+				ctx.lineTo(x - base_offset, y - base_width);
+				ctx.fill();
+				break;
+			case "right":
+				ctx.moveTo(x + base_offset, y - base_width);
+				ctx.lineTo(x + point, y);
+				ctx.lineTo(x + base_offset, y + base_width);
+				ctx.lineTo(x + in_point, y);
+				ctx.lineTo(x + base_offset, y - base_width);
+				ctx.fill();
+				break;
+		}
+	}
+
 	this.drawPieces = function() {
 		var space_side = board_side / board.size;
 		
 		for (var i = 0; i < board.size; i++) {
 			for (var j = 0; j < board.size; j++) {
 				var dot = board.space[i][j];
-				if (dot !== undefined) {				
-					dot.draw((board_x + space_side / 2) + space_side * i,
-							 (board_y + space_side / 2) + space_side * j);
+				if (dot !== undefined) {	
+					this.drawDot(dot, (board_x + space_side / 2) + space_side * i, (board_y + space_side / 2) + space_side * j);
 				}
 			}
 		}	
-	}
-	
-	//TODO
-	this.drawDot = function(dot, x, y) {
-		var space_side = board_side / board.size;
-		var radius = space_side / 2 * dot_size;
-		//incomplete
 	}
 }
 
@@ -183,7 +238,7 @@ function launch () {
 	gfx.drawPieces();
 
 	// Draw the game UI
-	drawUI();
+	gfx.drawUI();
 	
 	// Initialize keyHandler
 	document.addEventListener('keydown', keyHandler, true);
@@ -219,26 +274,14 @@ function Board (size) {
 	this.x = (canvas.width - canvas.height) / 2;
 	this.y = 0;
 
-	// Board width and height from its origin
-	this.height = canvas.height;
-	this.width = this.x + this.height;
-
 	// Set board size
 	this.size = size;
-
-	// Board square width
-	this.x_spacing = this.height / size;
-
-	// Board square height
-	this.y_spacing = this.height / size;
 
 	// Initialize 2D array of spaces
 	this.space = new Array();
 	for (var i = 0; i < size; i++) {
 		this.space[i] = new Array();
 	}
-	
-
 	
 	// Board populate method
 	this.populate = function (density) {
@@ -271,8 +314,7 @@ function Board (size) {
 						direction = "right";
 						break;
 					}
-					var radius = (this.x_spacing / 2) * dot_size;
-					var dot = new Dot(radius, color, direction);
+					var dot = new Dot(color, direction);
 					this.space[i][j] = dot;
 				}
 			}
@@ -281,84 +323,16 @@ function Board (size) {
 }
 
 /** Dot object **/
-function Dot (radius, color, direction) {
+function Dot (color, direction) {
 	// Dot x and y origin
 	this.x;
 	this.y;
-	
-	// Dot radius
-	this.radius = radius;
 	
 	// Color hex code
 	this.color = color;
 
 	// up, down, left, or right
 	this.direction = direction;
-	
-	// Dot draw method
-	this.draw = function (x, y) {
-		// Update dot position
-		this.x = x;
-		this.y = y;
-		
-		// Draw circle
-		ctx.beginPath();
-		c_radius = this.radius * 0.66;
-		ctx.fillStyle = this.color;
-		ctx.moveTo(x, y);
-		ctx.arc(x, y, c_radius, 0, 2 * Math.PI);
-		ctx.fill();
-		
-		// Draw arrow
-		ctx.beginPath();
-		ctx.fillStyle = "#000000";
-		var point = c_radius * 1.5;
-		var in_point = c_radius * 0.4;
-		var base_width = c_radius * 0.6;
-		var base_offset = c_radius * 0.2;
-		switch (this.direction) {
-			case "up":
-				ctx.moveTo(x - base_width, y - base_offset);
-				ctx.lineTo(x, y - point);
-				ctx.lineTo(x + base_width, y - base_offset);
-				ctx.lineTo(x, y - in_point);
-				ctx.lineTo(x - base_width, y - base_offset);
-				ctx.fill();
-				break;
-			case "down":
-				ctx.moveTo(x - base_width, y + base_offset);
-				ctx.lineTo(x, y + point);
-				ctx.lineTo(x + base_width, y + base_offset);
-				ctx.lineTo(x, y + in_point);
-				ctx.lineTo(x - base_width, y + base_offset);
-				ctx.fill();
-				break;
-			case "left":
-				ctx.moveTo(x - base_offset, y - base_width);
-				ctx.lineTo(x - point, y);
-				ctx.lineTo(x - base_offset, y + base_width);
-				ctx.lineTo(x - in_point, y);
-				ctx.lineTo(x - base_offset, y - base_width);
-				ctx.fill();
-				break;
-			case "right":
-				ctx.moveTo(x + base_offset, y - base_width);
-				ctx.lineTo(x + point, y);
-				ctx.lineTo(x + base_offset, y + base_width);
-				ctx.lineTo(x + in_point, y);
-				ctx.lineTo(x + base_offset, y - base_width);
-				ctx.fill();
-				break;
-		}
-	}
-}
-
-// Game UI draw method
-function drawUI () {
-	// UI background color
-	ctx.fillStyle = "#969696";
-	ctx.fillRect(0, 0, board.x, canvas.height);
-	ctx.fillRect(board.width, 0, canvas.width, canvas.height);
 }
 
 /* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
