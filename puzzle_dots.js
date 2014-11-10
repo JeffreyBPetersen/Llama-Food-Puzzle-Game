@@ -6,31 +6,34 @@
 
 
 // Define a size x size grid
-var board_size = 3;
+var board_size = 6;
 
 // Define dot size as a percentage of square size
 var dot_size = 0.8
 
 var board;
 var gfx;
+var gui;
 
 // Game launch method
 function launch () {
+
 	// Make a board object
 	board = new Board(board_size);
+	gui = new Gui();
 	gfx = new graphics();
 	
 	// Populate board spaces
 	board.populate(0.3);
+	
+	// Draw the game UI
+	gfx.drawUI();
 	
 	// Draw the board grid
 	gfx.drawGrid();
 	
 	// Draw board pieces
 	gfx.drawPieces();
-
-	// Draw the game UI
-	gfx.drawUI();
 	
 	// Initialize keyHandler
 	document.addEventListener('keydown', keyHandler, true);
@@ -152,6 +155,22 @@ function keyHandler (event) {
 	}
 }
 
+function mouseClick(event) {
+	var x = event.x - gui.canvas.offsetLeft;
+	var y = event.y - gui.canvas.offsetTop;
+	var space_side = gfx.board_side / board.size;
+	
+	x -= gfx.board_x;
+	x = Math.floor(x / space_side);
+	y -= gfx.board_y;
+	y = Math.floor(y / space_side);
+
+	var dot = board.space[x][y];
+	if (dot !== undefined) {
+		gfx.highlightColor(dot.color);
+	}
+}
+
 /** Board object **/
 function Board (size) {
 
@@ -172,13 +191,13 @@ function Board (size) {
 					var color, direction;
 					switch (Math.floor(Math.random() * 3)) {
 						case 0:
-						color = "#FF0000";
+						color = "red";
 						break
 						case 1:
-						color = "#00FF00";
+						color = "blue";
 						break;
 						case 2:
-						color = "#0000FF";
+						color = "yellow";
 						break;
 					}
 					switch (Math.floor(Math.random() * 4)) {
@@ -256,6 +275,8 @@ function GameLoop() {
 
 // constructor for gui object
 function Gui(){
+	this.canvas = document.getElementById('game_canvas');
+	this.canvas.addEventListener("mousedown", mouseClick, false);
 }
 
 // constructor for gfx object
@@ -264,42 +285,49 @@ function graphics() {
 	var ctx = canvas.getContext('2d');
 	
 	// Board x and y origin
-	var board_x = (canvas.width - canvas.height) / 2;
-	var board_y = 0;
+	this.board_x = (canvas.width - 18 * canvas.height / 20) / 2;
+	this.board_y = canvas.height / 20;
 
 	// length of each side of board
-	var board_side = canvas.height;
-	var ui_width = (canvas.width - board_side) / 2;
+	this.board_side = 18 * canvas.height / 20;
+	this.ui_width = (canvas.width - this.board_side) / 2;
 	
 	this.drawUI = function() {
 		ctx.fillStyle = "#969696";
-		ctx.fillRect(0, 0, ui_width, canvas.height);
-		ctx.fillRect(ui_width + board_side, 0, canvas.width, canvas.height);
+		ctx.fillRect(0, 0, this.ui_width, canvas.height);
+		ctx.fillRect(this.ui_width + this.board_side, 0, canvas.width, canvas.height);
+		ctx.fillRect(this.board_x, 0, this.board_x + this.board_side, this.board_y);
+		ctx.fillRect(this.board_x, this.board_y + this.board_side, canvas.height, this.board_x + this.board_side);
 	}
 
 	//draws the board.size X board.size grid (not including pieces)
 	this.drawGrid = function() {
-		var space_side = board_side / board.size;
+		var space_side = this.board_side / board.size;
+		
+		ctx.fillStyle = "white";
+		ctx.fillRect(this.board_x, this.board_y, this.board_side, this.board_side);
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 2;
 		ctx.beginPath();
 		
 		// Draw vertical lines
 		for (var i = 0; i <= board.size; i++) {
-			ctx.moveTo(i * space_side + board_x, 0);
-			ctx.lineTo(i * space_side + board_x, board_side);
+			ctx.moveTo(i * space_side + this.board_x, this.board_y);
+			ctx.lineTo(i * space_side + this.board_x, this.board_y + this.board_side);
 			ctx.stroke();
 		}
 
 		// Draw horizontal lines
 		for (var i = 0; i <= board.size; i++) {
-			ctx.moveTo(board_x, i * space_side);
-			ctx.lineTo(board_x + board_side, i * space_side);
+			ctx.moveTo(this.board_x, i * space_side + this.board_y);
+			ctx.lineTo(this.board_x + this.board_side, i * space_side + this.board_y);
 			ctx.stroke();
 		}
 	}
 	
 	// Takes a dot object and x,y location to draw
 	this.drawDot = function(dot, x, y) {
-		var space_side = board_side / board.size;
+		var space_side = this.board_side / board.size;
 		var radius = space_side / 2 * dot_size;
 		var c_radius = radius * 0.66;
 		
@@ -354,16 +382,37 @@ function graphics() {
 	}
 
 	this.drawPieces = function() {
-		var space_side = board_side / board.size;
+		var space_side = this.board_side / board.size;
 		
 		for (var i = 0; i < board.size; i++) {
 			for (var j = 0; j < board.size; j++) {
 				var dot = board.space[i][j];
 				if (dot !== undefined) {	
-					this.drawDot(dot, (board_x + space_side / 2) + space_side * i, (board_y + space_side / 2) + space_side * j);
+					this.drawDot(dot, (this.board_x + space_side / 2) + space_side * i, (this.board_y + space_side / 2) + space_side * j);
 				}
 			}
 		}	
+	}
+	
+	this.highlightColor = function(color) {
+		this.drawUI();
+		this.drawGrid();
+		this.drawPieces();
+		var space_side = this.board_side / board.size;
+		for (i = 0; i < board.size; i++) {
+			for (j = 0; j < board.size; j++) {
+				var dot = board.space[i][j];
+				if (dot !== undefined) {
+					if (dot.color == color) {
+						ctx.strokeStyle = color;
+						ctx.lineWidth = 6;
+						ctx.beginPath();
+						ctx.rect(this.board_x + i * space_side, this.board_y + j * space_side, space_side, space_side);
+						ctx.stroke();
+					}
+				}
+			}
+		}
 	}
 }
 
