@@ -156,8 +156,8 @@ function keyHandler (event) {
 }
 
 function mouseClick(event) {
-	var x = event.x - gui.canvas.offsetLeft;
-	var y = event.y - gui.canvas.offsetTop;
+	var x = event.layerX - gui.canvas.offsetLeft;
+	var y = event.layerY - gui.canvas.offsetTop;
 	var space_side = gfx.board_side / board.size;
 	
 	x -= gfx.board_x;
