@@ -4,6 +4,55 @@
 	
 **/
 
+
+// Define a size x size grid
+var board_size = 3;
+
+// Define dot size as a percentage of square size
+var dot_size = 0.8
+
+var board;
+var gfx;
+
+// Game launch method
+function launch () {
+	// Make a board object
+	board = new Board(board_size);
+	gfx = new graphics();
+	
+	// Populate board spaces
+	board.populate(0.3);
+	
+	// Draw the board grid
+	gfx.drawGrid();
+	
+	// Draw board pieces
+	gfx.drawPieces();
+
+	// Draw the game UI
+	gfx.drawUI();
+	
+	// Initialize keyHandler
+	document.addEventListener('keydown', keyHandler, true);
+    
+    // make GameLoop object
+	//game = new GameLoop();
+
+	// Start loop
+	//game.puzzleLoop();
+}
+
+// initialize all necessary objects
+function init(){
+	game = new Game()
+	board_size = 3 // DEBUG: placeholder
+	game.board = new game.Board(board_size)
+	
+	gui = new Gui()
+	
+	gfx = new graphics()
+}
+
 // constructor for game object
 function Game(){
 	// variable for board
@@ -83,6 +132,126 @@ function debug_game(){
 	d3 = new game.Dot("green", "left")
 	d4 = new game.Dot("blue", "up")
 	d5 = new game.Dot("purple", "right")
+}
+
+// KeyHandler
+function keyHandler (event) {
+	switch (event.keyCode) {
+		case 87:
+			// w is up
+			break;
+		case 83:
+			// s is down
+			break;
+		case 65:
+			// a is left
+			break;
+		case 68:
+			// d is right
+			break;
+	}
+}
+
+/** Board object **/
+function Board (size) {
+
+	// Set board size
+	this.size = size;
+
+	// Initialize 2D array of spaces
+	this.space = new Array();
+	for (var i = 0; i < size; i++) {
+		this.space[i] = new Array();
+	}
+	
+	// Board populate method
+	this.populate = function (density) {
+		for (var i = 0; i < this.size; i++) {
+			for (var j = 0; j < this.size; j++) {
+				if (Math.random() < density) {
+					var color, direction;
+					switch (Math.floor(Math.random() * 3)) {
+						case 0:
+						color = "#FF0000";
+						break
+						case 1:
+						color = "#00FF00";
+						break;
+						case 2:
+						color = "#0000FF";
+						break;
+					}
+					switch (Math.floor(Math.random() * 4)) {
+						case 0:
+						direction = "up";
+						break;
+						case 1:
+						direction = "down";
+						break;
+						case 2:
+						direction = "left";
+						break;
+						case 3:
+						direction = "right";
+						break;
+					}
+					var dot = new Dot(color, direction);
+					this.space[i][j] = dot;
+				}
+			}
+		}
+	}
+}
+
+/** Dot object **/
+function Dot (color, direction) {
+	// Dot x and y origin
+	this.x;
+	this.y;
+	
+	// Color hex code
+	this.color = color;
+
+	// up, down, left, or right
+	this.direction = direction;
+}
+
+/* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
+function GameLoop() {
+
+	this.update = function() {
+		// Update stuff and game logic.
+	}
+
+	this.render = function() {
+		// Animates dots.
+	}
+
+	this.puzzleLoop = function() {
+	    var last = Date.now(); 
+	    // frame rate, fps = 60
+	    var frameRate = 1000/60; 
+
+		function loop() {
+			// Calculate time elapsed since last frame.
+			var now = Date.now();
+			var elapsed = now - last;
+			last = now;
+
+			// request the next frame
+			window.requestAnimationFrame(loop); 
+			
+			// Update frames when elapsed is >= frame
+			while(elapsed >= frameRate){
+				elapsed = elapsed - frameRate;
+				this.update();
+			}
+
+			this.render();		
+		}
+
+		loop();
+	}
 }
 
 // constructor for gui object
@@ -198,177 +367,3 @@ function graphics() {
 	}
 }
 
-// initialize all necessary objects
-function init(){
-	game = new Game()
-	board_size = 3 // DEBUG: placeholder
-	game.board = new game.Board(board_size)
-	
-	gui = new Gui()
-	
-	gfx = new graphics()
-}
-
-// Global canvas and context variables
-var canvas = document.getElementById('game_canvas');
-var ctx = canvas.getContext('2d');
-
-// Define a size x size grid
-var board_size = 3;
-
-// Define dot size as a percentage of square size
-var dot_size = 0.8;
-
-var board;
-var gfx;
-
-// Game launch method
-function launch () {
-	// Make a board object
-	board = new Board(board_size);
-	gfx = new graphics();
-	
-	// Populate board spaces
-	board.populate(0.3);
-	
-	// Draw the board grid
-	gfx.drawGrid();
-	
-	// Draw board pieces
-	gfx.drawPieces();
-
-	// Draw the game UI
-	gfx.drawUI();
-	
-	// Initialize keyHandler
-	document.addEventListener('keydown', keyHandler, true);
-    
-    // make GameLoop object
-	//game = new GameLoop();
-
-	// Start loop
-	//game.puzzleLoop();
-}
-
-// KeyHandler
-function keyHandler (event) {
-	switch (event.keyCode) {
-		case 87:
-			// w is up
-			break;
-		case 83:
-			// s is down
-			break;
-		case 65:
-			// a is left
-			break;
-		case 68:
-			// d is right
-			break;
-	}
-}
-
-/** Board object **/
-function Board (size) {
-	// Board x and y origin
-	this.x = (canvas.width - canvas.height) / 2;
-	this.y = 0;
-
-	// Set board size
-	this.size = size;
-
-	// Initialize 2D array of spaces
-	this.space = new Array();
-	for (var i = 0; i < size; i++) {
-		this.space[i] = new Array();
-	}
-	
-	// Board populate method
-	this.populate = function (density) {
-		for (var i = 0; i < this.size; i++) {
-			for (var j = 0; j < this.size; j++) {
-				if (Math.random() < density) {
-					var color, direction;
-					switch (Math.floor(Math.random() * 3)) {
-						case 0:
-						color = "#FF0000";
-						break
-						case 1:
-						color = "#00FF00";
-						break;
-						case 2:
-						color = "#0000FF";
-						break;
-					}
-					switch (Math.floor(Math.random() * 4)) {
-						case 0:
-						direction = "up";
-						break;
-						case 1:
-						direction = "down";
-						break;
-						case 2:
-						direction = "left";
-						break;
-						case 3:
-						direction = "right";
-						break;
-					}
-					var dot = new Dot(color, direction);
-					this.space[i][j] = dot;
-				}
-			}
-		}
-	}
-}
-
-/** Dot object **/
-function Dot (color, direction) {
-	// Dot x and y origin
-	this.x;
-	this.y;
-	
-	// Color hex code
-	this.color = color;
-
-	// up, down, left, or right
-	this.direction = direction;
-}
-
-/* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
-function GameLoop() {
-
-	this.update = function() {
-		// Update stuff and game logic.
-	}
-
-	this.render = function() {
-		// Animates dots.
-	}
-
-	this.puzzleLoop = function() {
-	    var last = Date.now(); 
-	    // frame rate, fps = 60
-	    var frameRate = 1000/60; 
-
-		function loop() {
-			// Calculate time elapsed since last frame.
-			var now = Date.now();
-			var elapsed = now - last;
-			last = now;
-
-			// request the next frame
-			window.requestAnimationFrame(loop); 
-			
-			// Update frames when elapsed is >= frame
-			while(elapsed >= frameRate){
-				elapsed = elapsed - frameRate;
-				this.update();
-			}
-
-			this.render();		
-		}
-
-		loop();
-	}
-}
