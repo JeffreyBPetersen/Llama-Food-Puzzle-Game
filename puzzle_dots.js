@@ -11,13 +11,15 @@ var board_size = 6;
 // Define dot size as a percentage of square size
 var dot_size = 0.8
 
+var game;
 var board;
 var gfx;
 var gui;
 
 // Game launch method
 function launch () {
-
+	init();
+/*
 	// Make a board object
 	board = new Board(board_size);
 	gui = new Gui();
@@ -42,18 +44,19 @@ function launch () {
 	//game = new GameLoop();
 
 	// Start loop
-	//game.puzzleLoop();
+	//game.puzzleLoop();*/
 }
 
 // initialize all necessary objects
 function init(){
 	game = new Game()
-	board_size = 3 // DEBUG: placeholder
 	game.board = new game.Board(board_size)
-	
+	game.populate(.3);
 	gui = new Gui()
-	
 	gfx = new graphics()
+	gfx.drawUI();
+	gfx.drawGrid();
+	gfx.drawPieces();
 }
 
 // constructor for game object
@@ -88,6 +91,44 @@ function Game(){
 		for(var i = 0; i < size; i++){
 			this.goal[i] = new Array()
 			this.space[i] = new Array()
+		}
+	}
+	
+	// Board populate method
+	this.populate = function (density) {
+		for (var i = 0; i < this.board.size; i++) {
+			for (var j = 0; j < this.board.size; j++) {
+				if (Math.random() < density) {
+					var color, direction;
+					switch (Math.floor(Math.random() * 3)) {
+						case 0:
+						color = "red";
+						break
+						case 1:
+						color = "blue";
+						break;
+						case 2:
+						color = "yellow";
+						break;
+					}
+					switch (Math.floor(Math.random() * 4)) {
+						case 0:
+						direction = "up";
+						break;
+						case 1:
+						direction = "down";
+						break;
+						case 2:
+						direction = "left";
+						break;
+						case 3:
+						direction = "right";
+						break;
+					}
+					var dot = new this.Dot(color, direction);
+					this.board.space[i][j] = dot;
+				}
+			}
 		}
 	}
 	
@@ -158,82 +199,19 @@ function keyHandler (event) {
 function mouseClick(event) {
 	var x = event.layerX - gui.canvas.offsetLeft;
 	var y = event.layerY - gui.canvas.offsetTop;
-	var space_side = gfx.board_side / board.size;
+	var space_side = gfx.board_side / game.board.size;
 	
 	x -= gfx.board_x;
 	x = Math.floor(x / space_side);
 	y -= gfx.board_y;
 	y = Math.floor(y / space_side);
 
-	var dot = board.space[x][y];
+	var dot = game.board.space[x][y];
 	if (dot !== undefined) {
 		gfx.highlightColor(dot.color);
 	}
 }
 
-/** Board object **/
-function Board (size) {
-
-	// Set board size
-	this.size = size;
-
-	// Initialize 2D array of spaces
-	this.space = new Array();
-	for (var i = 0; i < size; i++) {
-		this.space[i] = new Array();
-	}
-	
-	// Board populate method
-	this.populate = function (density) {
-		for (var i = 0; i < this.size; i++) {
-			for (var j = 0; j < this.size; j++) {
-				if (Math.random() < density) {
-					var color, direction;
-					switch (Math.floor(Math.random() * 3)) {
-						case 0:
-						color = "red";
-						break
-						case 1:
-						color = "blue";
-						break;
-						case 2:
-						color = "yellow";
-						break;
-					}
-					switch (Math.floor(Math.random() * 4)) {
-						case 0:
-						direction = "up";
-						break;
-						case 1:
-						direction = "down";
-						break;
-						case 2:
-						direction = "left";
-						break;
-						case 3:
-						direction = "right";
-						break;
-					}
-					var dot = new Dot(color, direction);
-					this.space[i][j] = dot;
-				}
-			}
-		}
-	}
-}
-
-/** Dot object **/
-function Dot (color, direction) {
-	// Dot x and y origin
-	this.x;
-	this.y;
-	
-	// Color hex code
-	this.color = color;
-
-	// up, down, left, or right
-	this.direction = direction;
-}
 
 /* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
 function GameLoop() {
@@ -302,7 +280,7 @@ function graphics() {
 
 	//draws the board.size X board.size grid (not including pieces)
 	this.drawGrid = function() {
-		var space_side = this.board_side / board.size;
+		var space_side = this.board_side / game.board.size;
 		
 		ctx.fillStyle = "white";
 		ctx.fillRect(this.board_x, this.board_y, this.board_side, this.board_side);
@@ -311,14 +289,14 @@ function graphics() {
 		ctx.beginPath();
 		
 		// Draw vertical lines
-		for (var i = 0; i <= board.size; i++) {
+		for (var i = 0; i <= game.board.size; i++) {
 			ctx.moveTo(i * space_side + this.board_x, this.board_y);
 			ctx.lineTo(i * space_side + this.board_x, this.board_y + this.board_side);
 			ctx.stroke();
 		}
 
 		// Draw horizontal lines
-		for (var i = 0; i <= board.size; i++) {
+		for (var i = 0; i <= game.board.size; i++) {
 			ctx.moveTo(this.board_x, i * space_side + this.board_y);
 			ctx.lineTo(this.board_x + this.board_side, i * space_side + this.board_y);
 			ctx.stroke();
@@ -327,7 +305,7 @@ function graphics() {
 	
 	// Takes a dot object and x,y location to draw
 	this.drawDot = function(dot, x, y) {
-		var space_side = this.board_side / board.size;
+		var space_side = this.board_side / game.board.size;
 		var radius = space_side / 2 * dot_size;
 		var c_radius = radius * 0.66;
 		
@@ -382,11 +360,11 @@ function graphics() {
 	}
 
 	this.drawPieces = function() {
-		var space_side = this.board_side / board.size;
+		var space_side = this.board_side / game.board.size;
 		
-		for (var i = 0; i < board.size; i++) {
-			for (var j = 0; j < board.size; j++) {
-				var dot = board.space[i][j];
+		for (var i = 0; i < game.board.size; i++) {
+			for (var j = 0; j < game.board.size; j++) {
+				var dot = game.board.space[i][j];
 				if (dot !== undefined) {	
 					this.drawDot(dot, (this.board_x + space_side / 2) + space_side * i, (this.board_y + space_side / 2) + space_side * j);
 				}
@@ -398,10 +376,10 @@ function graphics() {
 		this.drawUI();
 		this.drawGrid();
 		this.drawPieces();
-		var space_side = this.board_side / board.size;
-		for (i = 0; i < board.size; i++) {
-			for (j = 0; j < board.size; j++) {
-				var dot = board.space[i][j];
+		var space_side = this.board_side / game.board.size;
+		for (i = 0; i < game.board.size; i++) {
+			for (j = 0; j < game.board.size; j++) {
+				var dot = game.board.space[i][j];
 				if (dot !== undefined) {
 					if (dot.color == color) {
 						ctx.strokeStyle = color;
