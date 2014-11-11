@@ -223,14 +223,6 @@ function mouseClick(event) {
 /* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
 function GameLoop() {
 
-	this.update = function() {
-		// Update stuff and game logic.
-	}
-
-	this.render = function() {
-		// Animates dots.
-	}
-
 	this.puzzleLoop = function() {
 	    var last = Date.now(); 
 	    // frame rate, fps = 60
@@ -248,14 +240,21 @@ function GameLoop() {
 			// Update frames when elapsed is >= frame
 			while(elapsed >= frameRate){
 				elapsed = elapsed - frameRate;
-				this.update();
+				update();
 			}
-
-			this.render();		
+			render();		
 		}
 
 		loop();
 	}
+}
+
+function update() {
+    // add game logic
+}
+    
+function render() {
+    // draw stuff
 }
 
 // constructor for gui object
