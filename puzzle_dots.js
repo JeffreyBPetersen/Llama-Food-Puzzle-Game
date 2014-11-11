@@ -116,10 +116,14 @@ function Game(){
 		this.direction = direction
 	}
 	
-	// constructor for goal object
-	// color is a string from color_enum
-	this.Goal = function(color){
-		this.color = color
+	// constructor for space object
+	// start is a dot, goal is a color in color_enum
+	// start is the dot on the space at the beginning of the level
+	// goal is the color of the dot on the space at the end of the level
+	this.Space = function(start, goal){
+		this.dot = start
+		this.goal = goal
+		this.collision = false
 	}
 	
 	// blending function for when dot_a moved into dot_b
