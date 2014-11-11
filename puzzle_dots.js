@@ -183,15 +183,19 @@ function keyHandler (event) {
 	switch (event.keyCode) {
 		case 87:
 			// w is up
+			console.log(gui.current_color + "  up");
 			break;
 		case 83:
 			// s is down
+			console.log(gui.current_color + "  down");
 			break;
 		case 65:
 			// a is left
+			console.log(gui.current_color + "  left");
 			break;
 		case 68:
 			// d is right
+			console.log(gui.current_color + "  right");
 			break;
 	}
 }
@@ -209,6 +213,7 @@ function mouseClick(event) {
 	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
 		var dot = game.board.space[x][y];
 		if (dot !== undefined) {
+			gui.current_color = dot.color;
 			gfx.highlightColor(dot.color);
 		}
 	}
@@ -255,8 +260,10 @@ function GameLoop() {
 
 // constructor for gui object
 function Gui(){
+	this.current_color = undefined;
 	this.canvas = document.getElementById('game_canvas');
 	this.canvas.addEventListener("mousedown", mouseClick, false);
+	document.addEventListener('keydown', keyHandler, true);
 }
 
 // constructor for gfx object
