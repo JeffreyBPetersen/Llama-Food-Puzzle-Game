@@ -99,34 +99,10 @@ function Game(){
 		for (var i = 0; i < this.board.size; i++) {
 			for (var j = 0; j < this.board.size; j++) {
 				if (Math.random() < density) {
-					var color, direction;
-					switch (Math.floor(Math.random() * 3)) {
-						case 0:
-						color = "red";
-						break
-						case 1:
-						color = "blue";
-						break;
-						case 2:
-						color = "yellow";
-						break;
-					}
-					switch (Math.floor(Math.random() * 4)) {
-						case 0:
-						direction = "up";
-						break;
-						case 1:
-						direction = "down";
-						break;
-						case 2:
-						direction = "left";
-						break;
-						case 3:
-						direction = "right";
-						break;
-					}
-					var dot = new this.Dot(color, direction);
-					this.board.space[i][j] = dot;
+					var color = this.color_enum[Math.floor(Math.random() * 6)]
+					var direction = ["up", "right", "down", "left"]
+						[Math.floor(Math.random() * 4)]
+					this.board.space[i][j] = new this.Dot(color, direction)
 				}
 			}
 		}
