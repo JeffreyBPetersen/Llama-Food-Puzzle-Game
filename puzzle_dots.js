@@ -206,9 +206,11 @@ function mouseClick(event) {
 	y -= gfx.board_y;
 	y = Math.floor(y / space_side);
 
-	var dot = game.board.space[x][y];
-	if (dot !== undefined) {
-		gfx.highlightColor(dot.color);
+	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
+		var dot = game.board.space[x][y];
+		if (dot !== undefined) {
+			gfx.highlightColor(dot.color);
+		}
 	}
 }
 
