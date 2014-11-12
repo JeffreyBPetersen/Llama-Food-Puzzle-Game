@@ -125,8 +125,9 @@ function Game(){
 	this.Dot = function(color, direction){
 		this.color = color
 		this.direction = direction
+		this.moved = false;
 	}
-	
+
 	// blending function for when dot_a moved into dot_b
 	// takes dot objects dot_a and dot_b
 	// returns blended dot or null for mutually destructive blending
@@ -145,6 +146,78 @@ function Game(){
 		// case for dominant blending
 		else
 			return new this.Dot(dot_a.color, dot_a.direction)
+	}
+
+	this.resetMoves = function () {
+		for (i = 0; i < game.board.size; i++) {
+			for (j = 0; j < game.board.size; j++) {
+				var dot = game.board.space[i][j].dot;
+				if (dot !== null) {
+					dot.moved = false;
+				}
+			}
+		}
+	}
+
+	this.move = function (dot, i, j, i_offset, j_offset) {
+		if (game.board.space[i + i_offset][j + j_offset].dot !== null) {
+			// Collision
+			dot_a = dot;
+			dot_b = game.board.space[i + i_offset][j + j_offset].dot;
+			new_dot = this.blend(dot_a, dot_b);
+			game.board.space[i][j].dot = new_dot;
+			new_dot.moved = true;
+		} else {
+			game.board.space[i + i_offset][j + j_offset].dot = dot;
+			dot.moved = true;
+		}
+	}
+
+	this.moveDots = function (color) {
+		for (i = 0; i < game.board.size; i++) {
+			for (j = 0; j < game.board.size; j++) {
+				var dot = game.board.space[i][j].dot;
+				if (dot !== null && dot.color == color && !dot.moved) {
+					// Remove dot reference
+					game.board.space[i][j].dot = null;
+					
+					// Move dot in dot.direction one space
+					// Toroid if at board edge
+					switch (dot.direction) {
+						case "up":
+							if (j == 0) {
+								this.move(dot, i, j, 0, game.board.size - 1);
+							} else {
+								this.move(dot, i, j, 0, -1);
+							}
+							break;
+						case "down":
+							if (j == (game.board.size - 1)) {
+								this.move(dot, i, j, 0, - (game.board.size - 1));
+							} else {
+								this.move(dot, i, j, 0, 1);
+							}
+							break;
+						case "left":
+							if (i == 0) {
+								this.move(dot, i, j, game.board.size - 1, 0);
+							} else {
+								this.move(dot, i, j, -1, 0);
+							}
+							break;
+						case "right":
+							if (i == (game.board.size - 1)) {
+								this.move(dot, i, j, -(game.board.size - 1), 0);
+							} else {
+								this.move(dot, i, j, 1, 0);
+							}
+							break;
+					}
+				}
+			}
+		}
+		this.resetMoves();
+		gfx.highlightColor(color);
 	}
 }
 
@@ -191,15 +264,23 @@ function mouseClick(event) {
 	y -= gfx.board_y;
 	y = Math.floor(y / space_side);
 
+	// First click selects dots of dot.color
+	// Subsequent clicks move selected dots
 	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
 		var dot = game.board.space[x][y].dot;
 		if (dot !== null) {
 			gui.current_color = dot.color;
-			gfx.highlightColor(dot.color);
+			if (gui.prev_color == gui.current_color) {
+				game.moveDots(dot.color);
+			} else {
+				gfx.highlightColor(dot.color);
+				gui.prev_color = dot.color;
+			}
+		} else {
+			game.moveDots(gui.prev_color);
 		}
 	}
 }
-
 
 /* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
 function GameLoop() {
@@ -240,6 +321,7 @@ function render() {
 
 // constructor for gui object
 function Gui(){
+	this.prev_color = undefined;
 	this.current_color = undefined;
 	this.canvas = document.getElementById('game_canvas');
 	this.canvas.addEventListener("mousedown", mouseClick, false);
@@ -250,7 +332,7 @@ function Gui(){
 function graphics() {
 	var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
-	
+
 	// Board x and y origin
 	this.board_x = (canvas.width - 18 * canvas.height / 20) / 2;
 	this.board_y = canvas.height / 20;
@@ -258,7 +340,14 @@ function graphics() {
 	// length of each side of board
 	this.board_side = 18 * canvas.height / 20;
 	this.ui_width = (canvas.width - this.board_side) / 2;
-	
+
+	// Draw UI, Board, and Pieces in that order
+	this.render = function () {
+		this.drawUI();
+		this.drawGrid();
+		this.drawPieces();
+	}
+
 	this.drawUI = function() {
 		ctx.fillStyle = "#969696";
 		ctx.fillRect(0, 0, this.ui_width, canvas.height);
@@ -360,11 +449,9 @@ function graphics() {
 			}
 		}	
 	}
-	
+
 	this.highlightColor = function(color) {
-		this.drawUI();
-		this.drawGrid();
-		this.drawPieces();
+		this.render();
 		var space_side = this.board_side / game.board.size;
 		for (i = 0; i < game.board.size; i++) {
 			for (j = 0; j < game.board.size; j++) {
@@ -382,4 +469,3 @@ function graphics() {
 		}
 	}
 }
-
