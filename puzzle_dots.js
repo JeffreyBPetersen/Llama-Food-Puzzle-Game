@@ -107,13 +107,16 @@ function Game(){
 	
 	// Board populate method
 	this.populate = function (density) {
-		for (var i = 0; i < this.board.size; i++) {
-			for (var j = 0; j < this.board.size; j++) {
-				if (Math.random() < density) {
+		for(var i = 0; i < this.board.size; i++) {
+			for(var j = 0; j < this.board.size; j++) {
+				if( Math.random() < density ) {
 					var color = this.color_enum[Math.floor(Math.random() * 6)]
 					var direction = ["up", "right", "down", "left"]
 						[Math.floor(Math.random() * 4)]
 					this.board.space[i][j].dot = new this.Dot(color, direction)
+				}
+				if( Math.random() < density ){
+					this.board.space[i][j].goal = this.color_enum[Math.floor(Math.random() * 6)]
 				}
 			}
 		}
