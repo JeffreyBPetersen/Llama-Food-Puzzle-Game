@@ -86,11 +86,22 @@ function Game(){
 	this.Board = function(size){
 		this.size = size
 		
-		this.goal = new Array()
+		// constructor for space object
+		// start is a dot, goal is a color in color_enum
+		// start is the dot on the space at the beginning of the level
+		// goal is the color of the dot on the space at the end of the level
+		this.Space = function(start, goal){
+			this.dot = start
+			this.goal = goal
+			this.collision = false
+		}
+		
 		this.space = new Array()
 		for(var i = 0; i < size; i++){
-			this.goal[i] = new Array()
 			this.space[i] = new Array()
+			for(var j = 0; j < size; j++){
+				this.space[i][j] = new this.Space(null, null)
+			}
 		}
 	}
 	
@@ -102,7 +113,7 @@ function Game(){
 					var color = this.color_enum[Math.floor(Math.random() * 6)]
 					var direction = ["up", "right", "down", "left"]
 						[Math.floor(Math.random() * 4)]
-					this.board.space[i][j] = new this.Dot(color, direction)
+					this.board.space[i][j].dot = new this.Dot(color, direction)
 				}
 			}
 		}
@@ -114,16 +125,6 @@ function Game(){
 	this.Dot = function(color, direction){
 		this.color = color
 		this.direction = direction
-	}
-	
-	// constructor for space object
-	// start is a dot, goal is a color in color_enum
-	// start is the dot on the space at the beginning of the level
-	// goal is the color of the dot on the space at the end of the level
-	this.Space = function(start, goal){
-		this.dot = start
-		this.goal = goal
-		this.collision = false
 	}
 	
 	// blending function for when dot_a moved into dot_b
@@ -191,8 +192,8 @@ function mouseClick(event) {
 	y = Math.floor(y / space_side);
 
 	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
-		var dot = game.board.space[x][y];
-		if (dot !== undefined) {
+		var dot = game.board.space[x][y].dot;
+		if (dot !== null) {
 			gui.current_color = dot.color;
 			gfx.highlightColor(dot.color);
 		}
@@ -352,8 +353,8 @@ function graphics() {
 		
 		for (var i = 0; i < game.board.size; i++) {
 			for (var j = 0; j < game.board.size; j++) {
-				var dot = game.board.space[i][j];
-				if (dot !== undefined) {	
+				var dot = game.board.space[i][j].dot;
+				if (dot !== null) {	
 					this.drawDot(dot, (this.board_x + space_side / 2) + space_side * i, (this.board_y + space_side / 2) + space_side * j);
 				}
 			}
@@ -367,8 +368,8 @@ function graphics() {
 		var space_side = this.board_side / game.board.size;
 		for (i = 0; i < game.board.size; i++) {
 			for (j = 0; j < game.board.size; j++) {
-				var dot = game.board.space[i][j];
-				if (dot !== undefined) {
+				var dot = game.board.space[i][j].dot;
+				if (dot !== null) {
 					if (dot.color == color) {
 						ctx.strokeStyle = color;
 						ctx.lineWidth = 6;
