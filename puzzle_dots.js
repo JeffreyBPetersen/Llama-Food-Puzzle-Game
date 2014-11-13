@@ -258,8 +258,8 @@ function keyHandler (event) {
 }
 
 function mouseClick(event) {
-	var x = event.layerX - gui.canvas.offsetLeft;
-	var y = event.layerY - gui.canvas.offsetTop;
+	var x = event.pageX - gui.canvas.offsetLeft;
+	var y = event.pageY - gui.canvas.offsetTop;
 	var space_side = gfx.board_side / game.board.size;
 	
 	x -= gfx.board_x;
@@ -327,7 +327,7 @@ function Gui(){
 	this.prev_color = undefined;
 	this.current_color = undefined;
 	this.canvas = document.getElementById('game_canvas');
-	this.canvas.addEventListener("mousedown", mouseClick, false);
+	this.canvas.addEventListener("click", mouseClick, false);
 	document.addEventListener('keydown', keyHandler, true);
 }
 
