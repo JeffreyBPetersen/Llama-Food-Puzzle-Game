@@ -6,7 +6,7 @@
 
 
 // Define a size x size grid
-var board_size = 4;
+var board_size = 3;
 
 // Define dot size as a percentage of square size
 var dot_size = 0.8
@@ -56,6 +56,7 @@ function init(){
 	gfx = new graphics()
 	gfx.drawUI();
 	gfx.drawGrid();
+	gfx.drawGoal();
 	gfx.drawPieces();
 }
 
@@ -489,6 +490,28 @@ function graphics() {
 				}
 			}
 		}	
+	}
+	
+	this.drawGoal = function() {
+		var space_side = this.board_side / game.board.size;
+		
+		for (i = 0; i < game.board.size; i++) {
+			for (j = 0; j < game.board.size; j++) {
+				console.log(game.board.space[i][j].goal);
+				if (game.board.space[i][j].goal != null) {
+					ctx.fillStyle = game.board.space[i][j].goal;
+					ctx.strokeStyle = game.board.space[i][j].goal;
+					ctx.lineWidth = 2;
+					ctx.beginPath();
+					ctx.moveTo(this.board_x + (i + 1) * space_side - space_side / 5, this.board_y + j * space_side);
+					ctx.lineTo(this.board_x + (i + 1) * space_side, this.board_y + j * space_side + space_side / 5);
+					ctx.lineTo(this.board_x + (i + 1) * space_side, this.board_y + j * space_side);
+					ctx.moveTo(this.board_x + (i + 1) * space_side - space_side / 5, this.board_y + j * space_side);
+					ctx.fill();
+					ctx.stroke();
+				}
+			}
+		}
 	}
 
 	this.highlightColor = function() {
