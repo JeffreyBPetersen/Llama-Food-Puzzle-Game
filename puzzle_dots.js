@@ -93,6 +93,47 @@ function Game(){
 		3 : "left"
 	}
 	
+	this.load_level = function(level){
+		switch(level){
+			// moving forward
+			case 0:
+				this.board = new this.Board(3)
+				this.board.space[1][0].goal = "blue"
+				this.board.space[1][2].dot = new this.Dot("blue", "up")
+				break
+			// turning
+			case 1:
+				this.board = new this.Board(3)
+				this.board.space[0][0].goal = "blue"
+				this.board.space[2][2].dot = new this.Dot("blue", "up")
+			// shared movement
+			case 2:
+				this.board = new this.Board(3)
+				this.board.space[0][0].goal = "blue"
+				this.board.space[2][2].goal = "blue"
+				this.board.space[0][2].dot = new this.Dot("blue", "up")
+				this.board.space[2][0].dot = new this.Dot("blue", "down")
+			// simple blending
+			case 3:
+				this.board = new this.Board(3)
+				this.board.space[1][0].goal = "purple"
+				this.board.space[0][2].dot = new this.Dot("red", "up")
+				this.board.space[2][2].dot = new this.Dot("blue", "up")
+			// absorbent blending
+			case 4:
+				this.board = new this.Board(3)
+				this.board.space[1][0].goal = "red"
+				this.board.space[0][2].dot = new this.Dot("red", "up")
+				this.board.space[1][2].dot = new this.Dot("red", "up")
+				this.board.space[2][2].dot = new this.Dot("blue", "up")
+			// destructive blending
+			case 5:
+				this.board = new this.Board(3)
+				this.board.space[0][1].dot = new this.Dot("red", "right")
+				this.board.space[2][1].dot = new this.Dot("green", "left")
+		}
+	}
+	
 	// constructor for board object
 	// size is >= 3
 	this.Board = function(size){
