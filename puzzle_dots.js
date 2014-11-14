@@ -743,7 +743,7 @@ function graphics() {
 			for (j = 0; j < game.board.size; j++) {
 				var dot = game.board.space[i][j].dot;
 				if (dot !== null) {
-					if (dot.color == gui.current_color) {
+					if (game.check_color_group(dot.color, gui.current_color) == true) {
 						ctx.strokeStyle = gui.current_color;
 						ctx.lineWidth = 6;
 						ctx.beginPath();
