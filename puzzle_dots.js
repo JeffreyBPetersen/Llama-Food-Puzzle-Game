@@ -6,7 +6,7 @@
 
 
 // Define a size x size grid
-var board_size = 6;
+var board_size = 3;
 
 // Define dot size as a percentage of square size
 var dot_size = 0.8
@@ -56,6 +56,7 @@ function init(){
 	gfx = new graphics()
 	gfx.drawUI();
 	gfx.drawGrid();
+	gfx.drawGoal();
 	gfx.drawPieces();
 }
 
@@ -79,6 +80,17 @@ function Game(){
 		3: "green",
 		4: "blue",
 		5: "purple"
+	}
+	
+	this.direction_enum = {
+		"up" : 0,
+		"right" : 1,
+		"down" : 2,
+		"left" : 3,
+		0 : "up",
+		1 : "right",
+		2 : "down",
+		3 : "left"
 	}
 	
 	// constructor for board object
@@ -383,7 +395,30 @@ function Game(){
 		}
 	}
 
-	/*this.resetMoves = function () {
+	/*this.rotate = function (color, direction) {
+		switch (direction) {
+			case "left":
+				direction = -1;
+				break;
+			case "right":
+				direction = 1;
+				break;
+		}
+		for (i = 0; i < this.board.size; i++) {
+			for (j = 0; j < this.board.size; j++) {
+				if (this.board.space[i][j].dot != null && this.board.space[i][j].dot.color == color) {
+					var new_direction = this.direction_enum[this.board.space[i][j].dot.direction] + direction;
+					new_direction %= 4;
+					if (new_direction == -1)
+						new_direction = 3;
+					this.board.space[i][j].dot.direction = this.direction_enum[new_direction];
+				}
+			}
+		}
+		gfx.render();
+	}
+	
+	this.resetMoves = function () {
 		for (i = 0; i < game.board.size; i++) {
 			for (j = 0; j < game.board.size; j++) {
 				var dot = game.board.space[i][j].dot;
@@ -452,7 +487,7 @@ function Game(){
 			}
 		}
 		this.resetMoves();
-		gfx.highlightColor(color);
+		gfx.render();
 	}*/
 }
 
@@ -481,17 +516,19 @@ function keyHandler (event) {
 		case 65:
 			// a is left
 			console.log(gui.current_color + "  left");
+			game.rotate(gui.current_color, "left");
 			break;
 		case 68:
 			// d is right
 			console.log(gui.current_color + "  right");
+			game.rotate(gui.current_color, "right");
 			break;
 	}
 }
 
 function mouseClick(event) {
-	var x = event.layerX - gui.canvas.offsetLeft;
-	var y = event.layerY - gui.canvas.offsetTop;
+	var x = event.pageX - gui.canvas.offsetLeft;
+	var y = event.pageY - gui.canvas.offsetTop;
 	var space_side = gfx.board_side / game.board.size;
 	
 	x -= gfx.board_x;
@@ -508,13 +545,14 @@ function mouseClick(event) {
 			if (gui.prev_color == gui.current_color) {
 				game.moveDots(dot.color);
 			} else {
-				gfx.highlightColor(dot.color);
+				gfx.highlightColor();
 				gui.prev_color = dot.color;
 			}
 		} else {
 			game.moveDots(gui.prev_color);
 		}
 	}
+	gfx.render();
 }
 
 /* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
@@ -559,7 +597,7 @@ function Gui(){
 	this.prev_color = undefined;
 	this.current_color = undefined;
 	this.canvas = document.getElementById('game_canvas');
-	this.canvas.addEventListener("mousedown", mouseClick, false);
+	this.canvas.addEventListener("click", mouseClick, false);
 	document.addEventListener('keydown', keyHandler, true);
 }
 
@@ -581,6 +619,7 @@ function graphics() {
 		this.drawUI();
 		this.drawGrid();
 		this.drawPieces();
+		this.highlightColor();
 	}
 
 	this.drawUI = function() {
@@ -684,16 +723,37 @@ function graphics() {
 			}
 		}	
 	}
+	
+	this.drawGoal = function() {
+		var space_side = this.board_side / game.board.size;
+		
+		for (i = 0; i < game.board.size; i++) {
+			for (j = 0; j < game.board.size; j++) {
+				console.log(game.board.space[i][j].goal);
+				if (game.board.space[i][j].goal != null) {
+					ctx.fillStyle = game.board.space[i][j].goal;
+					ctx.strokeStyle = game.board.space[i][j].goal;
+					ctx.lineWidth = 2;
+					ctx.beginPath();
+					ctx.moveTo(this.board_x + (i + 1) * space_side - space_side / 5, this.board_y + j * space_side);
+					ctx.lineTo(this.board_x + (i + 1) * space_side, this.board_y + j * space_side + space_side / 5);
+					ctx.lineTo(this.board_x + (i + 1) * space_side, this.board_y + j * space_side);
+					ctx.moveTo(this.board_x + (i + 1) * space_side - space_side / 5, this.board_y + j * space_side);
+					ctx.fill();
+					ctx.stroke();
+				}
+			}
+		}
+	}
 
-	this.highlightColor = function(color) {
-		this.render();
+	this.highlightColor = function() {
 		var space_side = this.board_side / game.board.size;
 		for (i = 0; i < game.board.size; i++) {
 			for (j = 0; j < game.board.size; j++) {
 				var dot = game.board.space[i][j].dot;
 				if (dot !== null) {
-					if (dot.color == color) {
-						ctx.strokeStyle = color;
+					if (dot.color == gui.current_color) {
+						ctx.strokeStyle = gui.current_color;
 						ctx.lineWidth = 6;
 						ctx.beginPath();
 						ctx.rect(this.board_x + i * space_side, this.board_y + j * space_side, space_side, space_side);
