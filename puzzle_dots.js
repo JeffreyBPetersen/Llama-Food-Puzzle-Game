@@ -6,7 +6,7 @@
 
 
 // Define a size x size grid
-var board_size = 3;
+var board_size = 5;
 
 // Define dot size as a percentage of square size
 var dot_size = 0.8
@@ -506,21 +506,21 @@ function keyHandler (event) {
 	switch (event.keyCode) {
 		case 87:
 			// w is up
-			console.log(gui.current_color + "  up");
+			game.process_move(gui.current_color, "forward");
+			gfx.render();
 			break;
 		case 83:
 			// s is down
-			console.log(gui.current_color + "  down");
 			break;
 		case 65:
 			// a is left
-			console.log(gui.current_color + "  left");
-			game.rotate(gui.current_color, "left");
+			game.process_move(gui.current_color, "left");
+			gfx.render();
 			break;
 		case 68:
 			// d is right
-			console.log(gui.current_color + "  right");
-			game.rotate(gui.current_color, "right");
+			game.process_move(gui.current_color, "right");
+			gfx.render();
 			break;
 	}
 }
@@ -541,14 +541,6 @@ function mouseClick(event) {
 		var dot = game.board.space[x][y].dot;
 		if (dot !== null) {
 			gui.current_color = dot.color;
-			if (gui.prev_color == gui.current_color) {
-				game.moveDots(dot.color);
-			} else {
-				gfx.highlightColor();
-				gui.prev_color = dot.color;
-			}
-		} else {
-			game.moveDots(gui.prev_color);
 		}
 	}
 	gfx.render();
@@ -619,6 +611,7 @@ function graphics() {
 		this.drawGrid();
 		this.drawPieces();
 		this.highlightColor();
+		this.drawGoal();
 	}
 
 	this.drawUI = function() {
@@ -728,7 +721,6 @@ function graphics() {
 		
 		for (i = 0; i < game.board.size; i++) {
 			for (j = 0; j < game.board.size; j++) {
-				console.log(game.board.space[i][j].goal);
 				if (game.board.space[i][j].goal != null) {
 					ctx.fillStyle = game.board.space[i][j].goal;
 					ctx.strokeStyle = game.board.space[i][j].goal;
