@@ -205,7 +205,7 @@ function Game(){
 		return this.get_adjacent(x, y, source.dot.direction)
 	}
 	
-	// moved the selected color group using the chosen move
+	// move the selected color group using the chosen move
 	// color_group is "red", "yellow", or "blue"
 	// move is "left" (turning), "right" (turning), or "forward"
 	this.process_move = function(color_group, move){
@@ -220,9 +220,8 @@ function Game(){
 			// process board state until a steady state is reached
 			var progress = true
 			while(progress){
-				// FIX: Ignore "incoming" dots on resolved spaces
 				progress = false
-				// Build new board state with unprocessed cycles
+				// build new board state with unprocessed cycles
 				for(var x = 0; x < size; x++){
 					for(var y = 0; y < size; y++){
 						var target = this.board.space[x][y]
@@ -292,7 +291,7 @@ function Game(){
 				}
 			}
 			progress = true
-			// Check for and process cycles to finalize new board state
+			// check for and process cyclic movement to finalize new board state
 			while(progress){
 				progress = false
 				var x, y
@@ -308,7 +307,7 @@ function Game(){
 				}
 				if(x == size)
 					continue
-				// Handle close range collisions
+				// handle head to head collisions
 				var target = this.board.space[x][y]
 				switch(target.dot.direction){
 					case "up":
@@ -344,7 +343,7 @@ function Game(){
 						}
 						break
 				}
-				// Handle circuitous movement
+				// handle circuitous movement
 				var current = this.board.space[x][y].dot
 				this.board.space[x][y].dot = null
 				var next
