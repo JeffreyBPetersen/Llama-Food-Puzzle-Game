@@ -82,7 +82,7 @@ function Game(){
 	}
 	
 	// constructor for board object
-	// size is >= 2
+	// size is >= 3
 	this.Board = function(size){
 		this.size = size
 		
@@ -93,7 +93,7 @@ function Game(){
 		this.Space = function(start, goal){
 			this.dot = start
 			this.goal = goal
-			this.collision = false
+			this.resolved = false
 		}
 		
 		this.space = new Array()
@@ -128,7 +128,7 @@ function Game(){
 	this.Dot = function(color, direction){
 		this.color = color
 		this.direction = direction
-		this.moved = false;
+		// this.moved = false;
 	}
 
 	// blending function for when dot_a moved into dot_b
@@ -150,8 +150,240 @@ function Game(){
 		else
 			return new this.Dot(dot_a.color, dot_a.direction)
 	}
+	
+	// checks if color is in color_group
+	// takes two colors from color_enum
+	// returns boolean
+	this.check_color_group = function(color, color_group){
+		var color_val = this.color_enum[color]
+		var group_val = this.color_enum[color_group]
+		if((color_val + 1) % 6 == group_val
+		|| color_val == group_val
+		|| (color_val + 5) % 6 == group_val)
+			return true
+		return false
+	}
+	
+	// gets the space that's direction from space[x][y]
+	// takes x and y coordinates of a space and a direction
+	// returns the adjacent space in that direction
+	this.get_adjacent = function(x, y, direction){
+		switch(direction){
+			case "up":
+				return this.board.space[x][(y + this.board.size - 1) % this.board.size]
+			case "right":
+				return this.board.space[(x + 1) % this.board.size][y]
+			case "down":
+				return this.board.space[x][(y + 1) % this.board.size]
+			case "left":
+				return this.board.space[(x + this.board.size - 1) % this.board.size][y]
+		}
+	}
+	
+	// checks whether there is a moving dot on space[x][y] and where it's moving
+	// takes x and y coordinates of the space and color_group being moved
+	// returns space the dot on space[x][y] will move to
+	// returns null if there is no moving dot on space[x][y]
+	this.get_move_target = function(x, y, color_group){
+		var source = this.board.space[x][y]
+		if(source.dot == null)
+			return null
+		if(!this.check_color_group(source.dot.color, color_group))
+			return null
+		return this.get_adjacent(x, y, source.dot.direction)
+	}
+	
+	// moved the selected color group using the chosen move
+	// color_group is "red", "yellow", or "blue"
+	// move is "left" (turning), "right" (turning), or "forward"
+	this.process_move = function(color_group, move){
+		var size = this.board.size
+		if(move == "forward"){
+			// reinitialize space states to unprocessed
+			for(var x = 0; x < size; x++){
+				for(var y = 0; y < size; y++){
+					this.board.space[x][y].resolved = false
+				}
+			}
+			// process board state until a steady state is reached
+			var progress = true
+			while(progress){
+				// FIX: Ignore "incoming" dots on resolved spaces
+				progress = false
+				// Build new board state with unprocessed cycles
+				for(var x = 0; x < size; x++){
+					for(var y = 0; y < size; y++){
+						var target = this.board.space[x][y]
+						if(!target.resolved){
+							var source = null
+							var up = false
+							var right = false
+							var down = false
+							var left = false
+							if(!this.get_adjacent(x,y,"up").resolved && this.get_move_target(x, (y + size - 1) % size, color_group) == target){
+								up = true
+								source = this.get_adjacent(x,y,"up")
+							}
+							if(!this.get_adjacent(x,y,"right").resolved && this.get_move_target((x + 1) % size, y, color_group) == target){
+								right = true
+								if(source == null)
+									source = this.get_adjacent(x,y,"right")
+								else
+									source = "split"
+							}
+							if(!this.get_adjacent(x,y,"down").resolved && this.get_move_target(x, (y + 1) % size, color_group) == target){
+								down = true
+								if(source == null)
+									source = this.get_adjacent(x,y,"down")
+								else
+									source = "split"
+							}
+							if(!this.get_adjacent(x,y,"left").resolved && this.get_move_target((x + size - 1) % size, y, color_group) == target){
+								left = true
+								if(source == null)
+									source = this.get_adjacent(x,y,"left")
+								else
+									source = "split"
+							}
+							// collision on attempting to move to target
+							if(source == "split"){
+								if(up)
+									this.get_adjacent(x,y,"up").resolved = true
+								if(right)
+									this.get_adjacent(x,y,"right").resolved = true
+								if(down)
+									this.get_adjacent(x,y,"down").resolved = true
+								if(left)
+									this.get_adjacent(x,y,"left").resolved = true
+								progress = true
+							}
+							// no dot moving from target
+							if(this.get_move_target(x, y, color_group) == null){
+								if(source != null && source != "split"){
+									if(target.dot == null){
+										target.dot = source.dot
+										source.dot = null
+									}
+									else{
+										target.dot = this.blend(source.dot, target.dot)
+										source.dot = null
+									}
+								}
+								target.resolved = true
+								progress = true
+							}
+							// collision on attempting to move from target into resolved space
+							else if(this.get_move_target(x, y, color_group).resolved == true)
+								target.resolved = true
+						}
+					}
+				}
+			}
+			progress = true
+			// Check for and process cycles to finalize new board state
+			while(progress){
+				progress = false
+				var x, y
+				for(x = 0; x < size; x++){
+					for(y = 0; y < size; y++){
+						if(this.board.space[x][y].resolved == false){
+							progress = true
+							break
+						}
+					}
+					if(progress)
+						break
+				}
+				if(x == size)
+					continue
+				// Handle close range collisions
+				var target = this.board.space[x][y]
+				switch(target.dot.direction){
+					case "up":
+						if(this.get_move_target(x, (y + size - 1) % size, color_group) == target){
+							target.resolved = true
+							this.get_adjacent(x,y,"up").resolved = true
+							progress = true
+							continue
+						}
+						break
+					case "right":
+						if(this.get_move_target((x + 1) % size, y, color_group) == target){
+							target.resolved = true
+							this.get_adjacent(x,y,"right").resolved = true
+							progress = true
+							continue
+						}
+						break
+					case "down":
+						if(this.get_move_target(x, (y + 1) % size, color_group) == target){
+							target.resolved = true
+							this.get_adjacent(x,y,"down").resolved = true
+							progress = true
+							continue
+						}
+						break
+					case "left":
+						if(this.get_move_target((x + size - 1) % size, y, color_group) == target){
+							target.resolved = true
+							this.get_adjacent(x,y,"left").resolved = true
+							progress = true
+							continue
+						}
+						break
+				}
+				// Handle circuitous movement
+				var current = this.board.space[x][y].dot
+				this.board.space[x][y].dot = null
+				var next
+				while(true){
+					switch(current.direction){
+						case "up":
+							y = (y + size - 1) % size
+							break
+						case "right":
+							x = (x + 1) % size
+							break
+						case "down":
+							y = (y + 1) % size
+							break
+						case "left":
+							x = (x + size - 1) % size
+							break
+					}
+					if(this.board.space[x][y].dot != null){
+						next = this.board.space[x][y].dot
+						this.board.space[x][y].dot = current
+						current = next
+						this.board.space[x][y].resolved = true
+					}
+					else{
+						this.board.space[x][y].dot = current
+						this.board.space[x][y].resolved = true
+						break
+					}
+				}
+			}
+		}
+		else{
+			for(var x = 0; x < this.board.size; x++){
+				for(var y = 0; y < this.board.size; y++){
+					if(this.board.space[x][y].dot == null)
+						continue
+					if(this.check_color_group(this.board.space[x][y].dot.color, color_group)){
+						var dirs = ["up", "right", "down", "left"]
+						var dir = dirs.indexOf(this.board.space[x][y].dot.direction)
+						if(move == "right")
+							this.board.space[x][y].dot.direction = dirs[(dir + 1) % 4]
+						else
+							this.board.space[x][y].dot.direction = dirs[(dir + 3) % 4]
+					}
+				}
+			}
+		}
+	}
 
-	this.resetMoves = function () {
+	/*this.resetMoves = function () {
 		for (i = 0; i < game.board.size; i++) {
 			for (j = 0; j < game.board.size; j++) {
 				var dot = game.board.space[i][j].dot;
@@ -221,7 +453,7 @@ function Game(){
 		}
 		this.resetMoves();
 		gfx.highlightColor(color);
-	}
+	}*/
 }
 
 // debug function for working on game object, prone to change as needed
