@@ -188,18 +188,11 @@ function Game(){
 		this.direction = direction
 		// this.moved = false;
 	}
-    
-    // sound for blending
-    this.loadSound = function(){
-        var snd2 = new Audio("pop.mp3"); 
-        snd2.play();
-    }
 
 	// blending function for when dot_a moved into dot_b
 	// takes dot objects dot_a and dot_b
 	// returns blended dot or null for mutually destructive blending
 	this.blend = function(dot_a, dot_b){
-        this.loadSound();
 		// case for destructive blending
 		if((this.color_enum[dot_a.color] + 3) % 6 == this.color_enum[dot_b.color])
 			return null
@@ -256,6 +249,21 @@ function Game(){
 		if(!this.check_color_group(source.dot.color, color_group))
 			return null
 		return this.get_adjacent(x, y, source.dot.direction)
+	}
+	
+	// returns boolean of whether the level is currently completed
+	this.is_win_state = function(){
+		for(var x = 0; x < this.board.size; x++){
+			for(var y = 0; y < this.board.size; y++){
+				if(this.board.space[x][y].dot == null){
+					if(this.board.space[x][y].goal != null)
+						return false
+				}
+				else if(this.board.space[x][y].dot.color != this.board.space[x][y].goal)
+					return false
+			}
+		}
+		return true
 	}
 	
 	// move the selected color group using the chosen move
@@ -582,8 +590,7 @@ function mouseClick(event) {
 	var x = event.pageX - gui.canvas.offsetLeft;
 	var y = event.pageY - gui.canvas.offsetTop;
 	var space_side = gfx.board_side / game.board.size;
-    var click = new Audio("click.mp3");
-   
+	
 	x -= gfx.board_x;
 	x = Math.floor(x / space_side);
 	y -= gfx.board_y;
@@ -595,7 +602,6 @@ function mouseClick(event) {
 		var dot = game.board.space[x][y].dot;
 		if (dot !== null) {
 			gui.current_color = dot.color;
-            click.play();
 		}
 	}
 	gfx.render();
