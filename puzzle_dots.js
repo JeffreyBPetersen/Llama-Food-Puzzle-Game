@@ -188,11 +188,18 @@ function Game(){
 		this.direction = direction
 		// this.moved = false;
 	}
+    
+    // sound for blending
+    this.loadSound = function(){
+        var snd2 = new Audio("pop.mp3"); 
+        snd2.play();
+    }
 
 	// blending function for when dot_a moved into dot_b
 	// takes dot objects dot_a and dot_b
 	// returns blended dot or null for mutually destructive blending
 	this.blend = function(dot_a, dot_b){
+        this.loadSound();
 		// case for destructive blending
 		if((this.color_enum[dot_a.color] + 3) % 6 == this.color_enum[dot_b.color])
 			return null
