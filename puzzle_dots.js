@@ -582,7 +582,8 @@ function mouseClick(event) {
 	var x = event.pageX - gui.canvas.offsetLeft;
 	var y = event.pageY - gui.canvas.offsetTop;
 	var space_side = gfx.board_side / game.board.size;
-	
+    var click = new Audio("click.mp3");
+   
 	x -= gfx.board_x;
 	x = Math.floor(x / space_side);
 	y -= gfx.board_y;
@@ -594,6 +595,7 @@ function mouseClick(event) {
 		var dot = game.board.space[x][y].dot;
 		if (dot !== null) {
 			gui.current_color = dot.color;
+            click.play();
 		}
 	}
 	gfx.render();
