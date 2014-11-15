@@ -258,6 +258,21 @@ function Game(){
 		return this.get_adjacent(x, y, source.dot.direction)
 	}
 	
+	// returns boolean of whether the level is currently completed
+	this.is_win_state = function(){
+		for(var x = 0; x < this.board.size; x++){
+			for(var y = 0; y < this.board.size; y++){
+				if(this.board.space[x][y].dot == null){
+					if(this.board.space[x][y].goal != null)
+						return false
+				}
+				else if(this.board.space[x][y].dot.color != this.board.space[x][y].goal)
+					return false
+			}
+		}
+		return true
+	}
+	
 	// move the selected color group using the chosen move
 	// color_group is "red", "yellow", or "blue"
 	// move is "left" (turning), "right" (turning), or "forward"
