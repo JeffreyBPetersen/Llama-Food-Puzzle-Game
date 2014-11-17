@@ -5,7 +5,7 @@
 **/
 
 
-// Define a size x size grid
+// Define a size by size grid
 var board_size = 5;
 
 // Define dot size as a percentage of square size
@@ -650,20 +650,17 @@ function debug_game(){
 function keyHandler (event) {
 	switch (event.keyCode) {
 		case 87:
-			// w is up
+			// W moves selected dots in their arrow direction
 			game.process_move(gui.current_color, "forward");
 			gfx.render();
 			break;
-		case 83:
-			// s is down
-			break;
 		case 65:
-			// a is left
+			// A rotates selected dots 90 degrees counter-clockwise
 			game.process_move(gui.current_color, "left");
 			gfx.render();
 			break;
 		case 68:
-			// d is right
+			// D rotates selected dots 90 degrees clockwise
 			game.process_move(gui.current_color, "right");
 			gfx.render();
 			break;
