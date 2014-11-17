@@ -18,6 +18,7 @@ var gui;
 
 // Game launch method
 function launch () {
+    //startScreen();
 	init();
 /*
 	// Make a board object
@@ -58,6 +59,82 @@ function init(){
 	gfx.drawGrid();
 	gfx.drawGoal();
 	gfx.drawPieces();
+}
+
+function startScreen() {
+    // Screen Sound
+    //var snd3 = new Audio("ambient.mp3"); 
+    //snd3.loop = true;
+    //snd3.play();
+    
+    var canvas = document.getElementById("game_canvas");
+    var ctx = canvas.getContext("2d");
+    var y = ctx.canvas.height / 6;
+    var x = ctx.canvas.height /2;
+    
+    // fill background
+    ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "#9ED6E8";
+    ctx.fill();
+    
+    var logoImage = new Image();
+    var creditsImage = new Image();
+    var levelsImage = new Image();
+    var startImage = new Image();
+    var instructImage = new Image();
+    
+    startImage.src = "start.png";  
+    startImage.style.margin = "0 auto";
+    creditsImage.src = "credits.png";
+    logoImage.src = "puzzle.png";
+    levelsImage.src = "levels.png";
+    instructImage.src = "instructions.png";
+    
+    /*
+    var buttonX = [192,110,149,160];
+    var buttonY = [100,140,180,220];
+    var buttonWidth = [96,260,182,160];
+    var buttonHeight = [40,40,40,40];
+    */
+    
+    logoImage.onload = function(){
+        centerImage(ctx, logoImage, 5);
+    }
+    
+    startImage.onload = function(){
+        centerImage(ctx, startImage, y + 20);
+    }
+    
+    instructImage.onload = function(){
+        centerImage(ctx, instructImage, y + 95);
+    }
+    
+    levelsImage.onload = function(){
+        centerImage(ctx, levelsImage, y + 170);
+    }
+    
+    creditsImage.onload = function(){
+        centerImage(ctx, creditsImage, y + 250);
+    }
+}
+
+/* center the images in start screen */
+function centerImage(ctx, img, y){
+    var d_width = img.width;
+    var d_height = img.height;
+    var x = (ctx.canvas.width - d_width) / 2;
+    ctx.drawImage(img, x, y);
+}
+
+/* will use later to track click positions */
+function checkPos(mouseEvent){
+    if(mouseEvent.pageX || mouseEvent.pageY == 0){
+        mouseX = mouseEvent.pageX - this.offsetLeft;
+        mouseY = mouseEvent.pageY - this.offsetTop;
+    }else if(mouseEvent.offsetX || mouseEvent.offsetY == 0){
+        mouseX = mouseEvent.offsetX;
+        mouseY = mouseEvent.offsetY;
+    }
 }
 
 // constructor for game object
