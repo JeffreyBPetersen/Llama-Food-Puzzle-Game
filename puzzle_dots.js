@@ -72,11 +72,6 @@ function startScreen() {
     
     this.start = function (){
     //this.playSound();
-    var canvas = document.getElementById("game_canvas");
-    var ctx = canvas.getContext("2d");
-    var y = ctx.canvas.height / 6;
-    var x = ctx.canvas.height /2;
-    
     // fill background
     ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle = "#9ED6E8";
