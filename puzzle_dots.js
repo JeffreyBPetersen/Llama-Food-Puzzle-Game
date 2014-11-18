@@ -84,12 +84,12 @@ function startScreen() {
     var instructImage = new Image();
     
     //load images
-    startImage.src = "start.png";  
+    startImage.src = "pics/start.png";  
     startImage.style.margin = "0 auto";
-    creditsImage.src = "credits.png";
-    logoImage.src = "puzzle.png";
-    levelsImage.src = "levels.png";
-    instructImage.src = "instructions.png";
+    creditsImage.src = "pics/credits.png";
+    logoImage.src = "pics/puzzle.png";
+    levelsImage.src = "pics/levels.png";
+    instructImage.src = "pics/instructions.png";
     
     buttonX = [622,533,616,601];
     buttonY = [173,197,268,355];
@@ -132,7 +132,7 @@ function startScreen() {
     }
     
     this.playSound = function(){
-        snd3 = new Audio("ambient.mp3"); 
+        snd3 = new Audio("sound/ambient.mp3"); 
         snd3.loop = true;
         snd3.play();
     }
@@ -302,7 +302,7 @@ function Game(){
     
     // sound for blending
     this.loadSound = function(){
-        var snd2 = new Audio("pop.mp3"); 
+        var snd2 = new Audio("sound/pop.mp3"); 
         snd2.play();
     }
 
@@ -381,6 +381,8 @@ function Game(){
 					return false
 			}
 		}
+        var snd4 = new Audio("sound/level_passed.mp3"); 
+        snd4.play();
 		return true
 	}
 	
@@ -705,7 +707,7 @@ function mouseClick(event) {
 	var x = event.pageX - gui.canvas.offsetLeft;
 	var y = event.pageY - gui.canvas.offsetTop;
 	var space_side = gfx.board_side / game.board.size;
-    var click = new Audio("click.mp3");
+    var click = new Audio("sound/click.mp3");
    
 	x -= gfx.board_x;
 	x = Math.floor(x / space_side);
