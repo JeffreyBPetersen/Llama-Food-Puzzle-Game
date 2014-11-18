@@ -18,8 +18,9 @@ var gui;
 
 // Game launch method
 function launch () {
-    //startScreen();
-	init();
+    strS = new startScreen();
+    strS.start();
+	//init();
 /*
 	// Make a board object
 	board = new Board(board_size);
@@ -61,12 +62,16 @@ function init(){
 	gfx.drawPieces();
 }
 
+var buttonX, buttonY, mouseX, mouseY;
 function startScreen() {
-    // Screen Sound
-    //var snd3 = new Audio("ambient.mp3"); 
-    //snd3.loop = true;
-    //snd3.play();
+    var snd3;  
+    var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+    var y = ctx.canvas.height / 6;
+    var x = ctx.canvas.height /2;
     
+    this.start = function (){
+    //this.playSound();
     var canvas = document.getElementById("game_canvas");
     var ctx = canvas.getContext("2d");
     var y = ctx.canvas.height / 6;
@@ -83,6 +88,7 @@ function startScreen() {
     var startImage = new Image();
     var instructImage = new Image();
     
+    //load images
     startImage.src = "start.png";  
     startImage.style.margin = "0 auto";
     creditsImage.src = "credits.png";
@@ -90,12 +96,10 @@ function startScreen() {
     levelsImage.src = "levels.png";
     instructImage.src = "instructions.png";
     
-    /*
-    var buttonX = [192,110,149,160];
-    var buttonY = [100,140,180,220];
-    var buttonWidth = [96,260,182,160];
-    var buttonHeight = [40,40,40,40];
-    */
+    buttonX = [622,533,616,601];
+    buttonY = [173,197,268,355];
+    var buttonWidth = [levelsImage.width, startImage.width, instructImage.width, creditsImage.width];
+    var buttonHeight = [levelsImage.height, startImage.height, instructImage.height, creditsImage.height]; 
     
     logoImage.onload = function(){
         centerImage(ctx, logoImage, 5);
@@ -116,9 +120,31 @@ function startScreen() {
     creditsImage.onload = function(){
         centerImage(ctx, creditsImage, y + 250);
     }
+    
+    canvas.addEventListener("mouseup", checkClick);
+    }
+    
+    this.update = function(){
+        this.clear();
+        init();
+    }
+    
+    this.clear = function(){
+        //snd3.pause();
+        canvas.removeEventListener("mousemove", checkPos);
+        canvas.removeEventListener("mouseup", checkClick);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    this.playSound = function(){
+        snd3 = new Audio("ambient.mp3"); 
+        snd3.loop = true;
+        snd3.play();
+    }
+
 }
 
-/* center the images in start screen */
+// center the images in start screen
 function centerImage(ctx, img, y){
     var d_width = img.width;
     var d_height = img.height;
@@ -126,7 +152,7 @@ function centerImage(ctx, img, y){
     ctx.drawImage(img, x, y);
 }
 
-/* will use later to track click positions */
+// check for mouse positions
 function checkPos(mouseEvent){
     if(mouseEvent.pageX || mouseEvent.pageY == 0){
         mouseX = mouseEvent.pageX - this.offsetLeft;
@@ -135,6 +161,19 @@ function checkPos(mouseEvent){
         mouseX = mouseEvent.offsetX;
         mouseY = mouseEvent.offsetY;
     }
+}
+
+// check whether the position of the mouse is correct. Still working on this.
+function checkClick(mouseEvent){
+    for(i = 0; i < buttonX.length; i++){
+        if(mouseX > buttonX[i] && mouseX < buttonX[i] + buttonWidth[i]){
+            if(mouseY > buttonY[i] && mouseY < buttonY[i] + buttonHeight[i]){
+                alert("Hi!")
+                //init();
+            }
+        }
+    }
+    strS.update();
 }
 
 // constructor for game object
