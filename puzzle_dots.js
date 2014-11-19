@@ -171,6 +171,50 @@ function checkClick(mouseEvent){
     strS.update();
 }
 
+function creditScreen(){
+    var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+    var y = ctx.canvas.height / 6;
+    var x = ctx.canvas.height /2;
+   
+    ctx.fillStyle = "rgba(93,179,199,0.20)";
+    ctx.beginPath();
+    ctx.arc(400,235,230,0,Math.PI*2,true);
+    ctx.closePath();
+    ctx.fill();
+    
+    var team_name = new Image();
+    team_name.src = "pics/teamllama.png";
+    team_name.onload = function(){
+        centerImage(ctx, team_name, 50);
+    }
+    
+    ctx.fillStyle = 'black';
+    ctx.font="20px Georgia";
+    centerText(ctx,"Created by", 40);
+    centerText(ctx, "Jeffrey, Connor, Adam, Vanda", 120);
+    
+    var team= new Image();
+    team.src = "pics/group_picture.jpg";
+    team.onload = function(){
+        centerImage(ctx, team, 130);
+    }
+    
+    this.update = function(){
+        this.clear();
+    }
+    
+    this.clear = function(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+    
+function centerText(ctx, txt, y){
+    var d_width = ctx.measureText(txt).width;
+    var x = (ctx.canvas.width - d_width) / 2;
+    ctx.fillText(txt, x, y);
+}
+
 // constructor for game object
 function Game(){
 	// variable for board
