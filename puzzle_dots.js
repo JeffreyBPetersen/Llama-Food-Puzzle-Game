@@ -90,12 +90,7 @@ function startScreen() {
     logoImage.src = "pics/puzzle.png";
     levelsImage.src = "pics/levels.png";
     instructImage.src = "pics/instructions.png";
-    
-    buttonX = [622,533,616,601];
-    buttonY = [173,197,268,355];
-    var buttonWidth = [levelsImage.width, startImage.width, instructImage.width, creditsImage.width];
-    var buttonHeight = [levelsImage.height, startImage.height, instructImage.height, creditsImage.height]; 
-    
+        
     logoImage.onload = function(){
         centerImage(ctx, logoImage, 5);
     }
@@ -126,7 +121,7 @@ function startScreen() {
     
     this.clear = function(){
         //snd3.pause();
-        canvas.removeEventListener("mousemove", checkPos);
+        //canvas.removeEventListener("mousemove", checkPos);
         canvas.removeEventListener("mouseup", checkClick);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -158,20 +153,35 @@ function checkPos(mouseEvent){
     }
 }
 
-// check whether the position of the mouse is correct. Still working on this.
+// check whether the position of the mouse is correct
 function checkClick(mouseEvent){
-    for(i = 0; i < buttonX.length; i++){
-        if(mouseX > buttonX[i] && mouseX < buttonX[i] + buttonWidth[i]){
-            if(mouseY > buttonY[i] && mouseY < buttonY[i] + buttonHeight[i]){
-                alert("Hi!")
-                //init();
-            }
-        }
+    mouseEvent.preventDefault();
+    
+    var rect = document.getElementById('game_canvas').getBoundingClientRect();
+    var x = mouseEvent.clientX - rect.left;
+    var y = mouseEvent.clientY - rect.top;
+    //alert("x: " + x + "y:" + y);
+    
+    // Start Button
+    if(x>332 && x<461 && y>111 && y<165){ 
+        strS.update();
     }
-    strS.update();
+    // Instructions Button
+    if(x>244 && x<551 && y>187 && y<240){ 
+        //alert('Instructions');
+    }
+    // Levels Button
+    if(x>327 && x<470 && y>261 && y<314){ 
+        //alert('Levels');
+    }
+    // Credits Button
+    if(x > 309 && x < 481 && y>340 && y<394){ 
+        creditScreen();
+    }
 }
 
 function creditScreen(){
+    strS.clear();
     var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
     var y = ctx.canvas.height / 6;
@@ -345,16 +355,29 @@ function Game(){
 	}
     
     // sound for blending
-    this.loadSound = function(){
-        var snd2 = new Audio("sound/pop.mp3"); 
-        snd2.play();
+    this.loadSound = function(sound){
+        if(sound == 1){
+            var snd = new Audio("sound/collide.mp3"); 
+            snd.play();
+        }
+        
+        if(sound == 0){
+            var snd = new Audio("sound/pop.mp3"); 
+            snd.play();
+        }
+        
+        if(sound == 2){
+            var snd = new Audio("sound/level_passed.mp3"); 
+            snd.play();
+        }
+        
     }
 
 	// blending function for when dot_a moved into dot_b
 	// takes dot objects dot_a and dot_b
 	// returns blended dot or null for mutually destructive blending
 	this.blend = function(dot_a, dot_b){
-        this.loadSound();
+        this.loadSound(0);
 		// case for destructive blending
 		if((this.color_enum[dot_a.color] + 3) % 6 == this.color_enum[dot_b.color])
 			return null
@@ -425,8 +448,7 @@ function Game(){
 					return false
 			}
 		}
-        var snd4 = new Audio("sound/level_passed.mp3"); 
-        snd4.play();
+        this.loadSound(2);
 		return true
 	}
 	
@@ -510,6 +532,7 @@ function Game(){
 							}
 							// collision on attempting to move from target into resolved space
 							else if(this.get_move_target(x, y, color_group).resolved == true)
+                                this.loadSound(1);	
 								target.resolved = true
 						}
 					}
