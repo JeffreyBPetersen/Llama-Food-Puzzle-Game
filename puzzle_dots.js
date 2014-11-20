@@ -759,11 +759,20 @@ function mouseClick(event) {
 	y = Math.floor(y / space_side);
 
 	// First click selects dots of dot.color
-	// Subsequent clicks move selected dots
 	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
 		var dot = game.board.space[x][y].dot;
 		if (dot !== null) {
-			gui.current_color = dot.color;
+			if (game.color_enum[dot.color] % 2 == 1) {
+				if (game.color_enum[gui.current_color] == (game.color_enum[dot.color] + 5) % 6) {
+					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 1) % 6];
+				}
+				else {
+					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 5) % 6];
+				}
+			}
+			else {
+				gui.current_color = dot.color;
+			}
             click.play();
 		}
 	}
