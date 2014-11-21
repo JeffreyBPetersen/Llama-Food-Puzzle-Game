@@ -36,6 +36,31 @@ function init(){
 	gfx.drawPieces();
 }
 
+// Adapted from the Mozilla suggested cookie framework
+// https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+var docCookies = {
+	getItem: function (sKey) {
+		if (!sKey) { return null; }
+		return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + 
+		encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) 
+		|| null;
+	},
+	setItem: function (sKey, sValue, expDate) {
+		if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
+		var sExpDate = "";
+		if (expDate.constructor == Date) {
+			sExpDate = "; expires=" + expDate.toUTCString();
+		}
+		document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpDate;
+		return true;
+	},
+	removeItem: function (sKey) {
+		if (this.getItem(sKey) == null) { return false; }
+		document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+		return true;
+	}
+};
+
 var buttonX, buttonY, mouseX, mouseY;
 function startScreen() {
     var snd3;  
@@ -206,6 +231,9 @@ function Game(){
 	// initialize when level is launched
 	this.board = null
 	
+	// Last level unlocked
+	this.levelUnlock = null;
+	
 	this.color_enum = {
 		"red" : 0,
 		"orange" : 1,
@@ -231,7 +259,20 @@ function Game(){
 		2 : "down",
 		3 : "left"
 	}
-
+	
+	// Game save function
+	this.saveGame = function() {
+		var daysToExp = 7;
+		var expDate = new Date();
+		expDate.setDate(expDate.getDate() + daysToExp);
+		docCookies.setItem("level", this.levelUnlock, expDate);
+	}
+	
+	// Game load function
+	this.loadGame = function() {
+		this.levelUnlock = docCookies.getItem("level");
+	}
+	
 	this.load_level = function(level){
 		switch(level){
 			// moving forward
