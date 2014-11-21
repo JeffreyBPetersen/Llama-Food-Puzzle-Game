@@ -21,32 +21,6 @@ function launch () {
     strS = new startScreen();
     strS.start();
 	//init();
-/*
-	// Make a board object
-	board = new Board(board_size);
-	gui = new Gui();
-	gfx = new graphics();
-	
-	// Populate board spaces
-	board.populate(0.3);
-	
-	// Draw the game UI
-	gfx.drawUI();
-	
-	// Draw the board grid
-	gfx.drawGrid();
-	
-	// Draw board pieces
-	gfx.drawPieces();
-	
-	// Initialize keyHandler
-	document.addEventListener('keydown', keyHandler, true);
-    
-    // make GameLoop object
-	//game = new GameLoop();
-
-	// Start loop
-	//game.puzzleLoop();*/
 }
 
 // initialize all necessary objects
@@ -257,7 +231,7 @@ function Game(){
 		2 : "down",
 		3 : "left"
 	}
-	
+
 	this.load_level = function(level){
 		switch(level){
 			// moving forward
@@ -641,101 +615,6 @@ function Game(){
 			}
 		}
 	}
-
-	/*this.rotate = function (color, direction) {
-		switch (direction) {
-			case "left":
-				direction = -1;
-				break;
-			case "right":
-				direction = 1;
-				break;
-		}
-		for (i = 0; i < this.board.size; i++) {
-			for (j = 0; j < this.board.size; j++) {
-				if (this.board.space[i][j].dot != null && this.board.space[i][j].dot.color == color) {
-					var new_direction = this.direction_enum[this.board.space[i][j].dot.direction] + direction;
-					new_direction %= 4;
-					if (new_direction == -1)
-						new_direction = 3;
-					this.board.space[i][j].dot.direction = this.direction_enum[new_direction];
-				}
-			}
-		}
-		gfx.render();
-	}
-	
-	this.resetMoves = function () {
-		for (i = 0; i < game.board.size; i++) {
-			for (j = 0; j < game.board.size; j++) {
-				var dot = game.board.space[i][j].dot;
-				if (dot !== null) {
-					dot.moved = false;
-				}
-			}
-		}
-	}
-
-	this.move = function (dot, i, j, i_offset, j_offset) {
-		if (game.board.space[i + i_offset][j + j_offset].dot !== null) {
-			// Collision
-			dot_a = dot;
-			dot_b = game.board.space[i + i_offset][j + j_offset].dot;
-			new_dot = this.blend(dot_a, dot_b);
-			game.board.space[i][j].dot = new_dot;
-			new_dot.moved = true;
-		} else {
-			game.board.space[i + i_offset][j + j_offset].dot = dot;
-			dot.moved = true;
-		}
-	}
-
-	this.moveDots = function (color) {
-		for (i = 0; i < game.board.size; i++) {
-			for (j = 0; j < game.board.size; j++) {
-				var dot = game.board.space[i][j].dot;
-				if (dot !== null && dot.color == color && !dot.moved) {
-					// Remove dot reference
-					game.board.space[i][j].dot = null;
-					
-					// Move dot in dot.direction one space
-					// Toroid if at board edge
-					switch (dot.direction) {
-						case "up":
-							if (j == 0) {
-								this.move(dot, i, j, 0, game.board.size - 1);
-							} else {
-								this.move(dot, i, j, 0, -1);
-							}
-							break;
-						case "down":
-							if (j == (game.board.size - 1)) {
-								this.move(dot, i, j, 0, - (game.board.size - 1));
-							} else {
-								this.move(dot, i, j, 0, 1);
-							}
-							break;
-						case "left":
-							if (i == 0) {
-								this.move(dot, i, j, game.board.size - 1, 0);
-							} else {
-								this.move(dot, i, j, -1, 0);
-							}
-							break;
-						case "right":
-							if (i == (game.board.size - 1)) {
-								this.move(dot, i, j, -(game.board.size - 1), 0);
-							} else {
-								this.move(dot, i, j, 1, 0);
-							}
-							break;
-					}
-				}
-			}
-		}
-		this.resetMoves();
-		gfx.render();
-	}*/
 }
 
 // debug function for working on game object, prone to change as needed
@@ -971,7 +850,7 @@ function graphics() {
 			}
 		}	
 	}
-	
+
 	this.drawGoal = function() {
 		var space_side = this.board_side / game.board.size;
 		
