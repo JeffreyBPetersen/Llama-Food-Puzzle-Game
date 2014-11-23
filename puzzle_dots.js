@@ -36,6 +36,18 @@ function init(){
 	gfx.drawPieces();
 }
 
+function init2(num){
+	game = new Game()
+	game.board = new game.Board(board_size)
+	game.load_level(num);
+	gui = new Gui()
+	gfx = new graphics()
+	gfx.drawUI();
+	gfx.drawGrid();
+	gfx.drawGoal();
+	gfx.drawPieces();
+}
+
 // Adapted from the Mozilla suggested cookie framework
 // https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
 var docCookies = {
@@ -61,7 +73,6 @@ var docCookies = {
 	}
 };
 
-var buttonX, buttonY, mouseX, mouseY;
 function startScreen() {
     var snd3;  
     var canvas = document.getElementById('game_canvas');
@@ -89,7 +100,7 @@ function startScreen() {
     logoImage.src = "pics/puzzle.png";
     levelsImage.src = "pics/levels.png";
     instructImage.src = "pics/instructions.png";
-        
+    
     logoImage.onload = function(){
         centerImage(ctx, logoImage, 5);
     }
@@ -120,7 +131,6 @@ function startScreen() {
     
     this.clear = function(){
         //snd3.pause();
-        //canvas.removeEventListener("mousemove", checkPos);
         canvas.removeEventListener("mouseup", checkClick);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -155,7 +165,6 @@ function checkPos(mouseEvent){
 // check whether the position of the mouse is correct
 function checkClick(mouseEvent){
     mouseEvent.preventDefault();
-    
     var rect = document.getElementById('game_canvas').getBoundingClientRect();
     var x = mouseEvent.clientX - rect.left;
     var y = mouseEvent.clientY - rect.top;
@@ -167,16 +176,18 @@ function checkClick(mouseEvent){
     }
     // Instructions Button
     if(x>244 && x<551 && y>187 && y<240){ 
+        instructScreen();
         //alert('Instructions');
     }
     // Levels Button
     if(x>327 && x<470 && y>261 && y<314){ 
-        //alert('Levels');
+        levelScreen();
     }
     // Credits Button
     if(x > 309 && x < 481 && y>340 && y<394){ 
         creditScreen();
     }
+    
 }
 
 function creditScreen(){
@@ -185,13 +196,11 @@ function creditScreen(){
 	var ctx = canvas.getContext('2d');
     var y = ctx.canvas.height / 6;
     var x = ctx.canvas.height /2;
-   
-    ctx.fillStyle = "rgba(93,179,199,0.20)";
-    ctx.beginPath();
-    ctx.arc(400,235,230,0,Math.PI*2,true);
-    ctx.closePath();
-    ctx.fill();
     
+    ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "#9ED6E8";
+    ctx.fill();
+
     var team_name = new Image();
     team_name.src = "pics/teamllama.png";
     team_name.onload = function(){
@@ -209,6 +218,45 @@ function creditScreen(){
         centerImage(ctx, team, 130);
     }
     
+    document.addEventListener('keydown', backToMenu, true);
+
+    this.update = function(){
+        this.clear();
+    }
+    
+    this.clear = function(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+}
+
+function backToMenu (event) {
+    var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+	if (event.keyCode == 82) {            
+        ctx.clearRect(0, 0, canvas.width, canvas.height);  
+        strS.clear();
+        strS.start();
+	}
+}
+
+function instructScreen(){
+    strS.clear();
+    var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+    var y = ctx.canvas.height / 6;
+    var x = ctx.canvas.height /2;
+    
+    ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "#9ED6E8";
+    ctx.fill();
+    
+    ctx.fillStyle = 'black';
+    ctx.font="20px Georgia";
+    centerText(ctx,"Instructions", 40);
+    
+    document.addEventListener('keydown', backToMenu, true);
+       
     this.update = function(){
         this.clear();
     }
@@ -217,6 +265,73 @@ function creditScreen(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 }
+
+
+function levelScreen(){
+    strS.clear();
+    var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+    var y = ctx.canvas.height / 6;
+    var x = ctx.canvas.height /2;
+    var levels = 6;
+    
+    ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "#9ED6E8";
+    ctx.fill();
+    
+    ctx.fillStyle = 'black';
+    ctx.font="25px Georgia";
+    centerText(ctx,"Levels", 40);
+    
+    for(var i = 1; i <= levels; i++){
+        for(var i = 1; i <= levels; i++){
+        ctx.font="25px Georgia";
+        ctx.fillText("L " + i, 80+100*i, 100);
+        }
+    }
+
+    document.addEventListener("click", selectLevel, false);
+    document.addEventListener('keydown', backToMenu, true);
+
+    this.update = function(){
+        this.clear();
+    }
+    
+    this.clear = function(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+
+/* This is temporary! Still working on it. */
+function selectLevel(e) {
+    e.preventDefault();
+    
+    var rect = document.getElementById('game_canvas').getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    //alert("x: " + x + "y:" + y);
+    
+    if(x>176 && x<211 && y>78 && y<105){ 
+        init2(0);
+    }
+    if(x>281 && x<320 && y>78 && y<105){ 
+        init2(1);
+    }
+    if(x>379 && x<417 && y>78 && y<105){ 
+        init2(2);
+    }
+    if(x >477 && x < 516 && y>78 && y<105){ 
+        init2(3);
+    }
+    if(x >578 && x < 615 && y>78 && y<105){ 
+        init2(4);
+    }
+    if(x > 679 && x < 720 && y>78 && y<105){ 
+        init2(5);
+    }    
+}
+
     
 function centerText(ctx, txt, y){
     var d_width = ctx.measureText(txt).width;
@@ -696,6 +811,13 @@ function keyHandler (event) {
 			// D rotates selected dots 90 degrees clockwise
 			game.process_move(gui.current_color, "right");
 			gfx.render();
+			break;
+        case 82:
+			// R clears canvas, refreshes page to Start Screen
+            //game.clear();
+            //strS.clear();
+            //strS.start();
+            window.location.reload();
 			break;
 	}
 }
