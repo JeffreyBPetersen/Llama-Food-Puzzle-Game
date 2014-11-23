@@ -232,6 +232,12 @@ function Game(){
 	// initialize when level is launched
 	this.board = null
 	
+	this.level = {
+		is_completed: false,
+		level_num: null,
+		move_count: null
+	}
+	
 	this.color_enum = {
 		"red" : 0,
 		"orange" : 1,
@@ -259,6 +265,8 @@ function Game(){
 	}
 	
 	this.load_level = function(level){
+		this.level.level_num = level
+		this.level.move_count = 0
 		switch(level){
 			// moving forward
 			case 0:
@@ -640,6 +648,7 @@ function Game(){
 				}
 			}
 		}
+		NEW: this.level.move_count++
 	}
 
 	/*this.rotate = function (color, direction) {
