@@ -429,7 +429,7 @@ function Game(){
 			// absorbent blending
 			case 4:
 				this.board = new this.Board(3)
-				this.board.space[1][0].goal = "red"
+				this.board.space[1][0].goal = "purple"
 				this.board.space[0][2].dot = new this.Dot("red", "up")
 				this.board.space[1][2].dot = new this.Dot("red", "up")
 				this.board.space[2][2].dot = new this.Dot("blue", "up")
@@ -670,9 +670,10 @@ function Game(){
 								progress = true
 							}
 							// collision on attempting to move from target into resolved space
-							else if(this.get_move_target(x, y, color_group).resolved == true)
-                                this.loadSound(1);	
+							else if(this.get_move_target(x, y, color_group).resolved == true){
+								this.loadSound(1);	
 								target.resolved = true
+							}
 						}
 					}
 				}
