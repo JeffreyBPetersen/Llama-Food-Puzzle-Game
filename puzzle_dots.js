@@ -448,6 +448,29 @@ function Game(){
 					this.board.space[i][5-i].goal = this.color_enum[i]
 				}
 				break
+			// alternating selections
+			case 7:
+				this.board = new this.Board(5)
+				this.board.space[1][1].dot = new this.Dot("blue", "down")
+				this.board.space[1][3].dot = new this.Dot("green", "up")
+				this.board.space[3][1].dot = new this.Dot("purple", "down")
+				this.board.space[3][3].dot = new this.Dot("blue", "up")
+				this.board.space[2][0].goal = "blue"
+				this.board.space[2][2].goal = "blue"
+				this.board.space[2][4].goal = "blue"
+				break
+			// tricky selections | least moves: Jeff - 20
+			case 8:
+				this.board = new this.Board(5)
+				this.board.space[1][1].dot = new this.Dot("blue", "down")
+				this.board.space[1][3].dot = new this.Dot("green", "up")
+				this.board.space[3][1].dot = new this.Dot("purple", "down")
+				this.board.space[3][3].dot = new this.Dot("blue", "up")
+				this.board.space[0][0].goal = "blue"
+				this.board.space[0][4].goal = "blue"
+				this.board.space[4][0].goal = "green"
+				this.board.space[4][4].goal = "purple"
+				break
 		}
 	}
 	
