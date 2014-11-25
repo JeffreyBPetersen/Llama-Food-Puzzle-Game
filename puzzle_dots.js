@@ -440,6 +440,14 @@ function Game(){
 				this.board.space[0][1].dot = new this.Dot("red", "right")
 				this.board.space[2][1].dot = new this.Dot("green", "left")
 				break
+			// tricky collisions | least moves: Jeff - 30
+			case 6:
+				this.board = new this.Board(6)
+				for(var i = 0; i < 6; i++){
+					this.board.space[i][5].dot = new this.Dot(this.color_enum[i], "up")
+					this.board.space[i][5-i].goal = this.color_enum[i]
+				}
+				break
 		}
 	}
 	
