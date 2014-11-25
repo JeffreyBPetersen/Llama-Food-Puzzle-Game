@@ -783,7 +783,7 @@ function Game(){
 		this.level.move_count++
 	}
 	
-	this.reset_level(){
+	this.reset_level = function(){
 		this.load_level(this.level.level_num)
 	}
 }
