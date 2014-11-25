@@ -780,7 +780,11 @@ function Game(){
 				}
 			}
 		}
-		NEW: this.level.move_count++
+		this.level.move_count++
+	}
+	
+	this.reset_level(){
+		this.load_level(this.level.level_num)
 	}
 }
 
