@@ -255,6 +255,18 @@ function instructScreen(){
     ctx.font="20px Georgia";
     centerText(ctx,"Instructions", 40);
     
+    var chart= new Image();
+    chart.src = "pics/instruct.jpg";
+    chart.onload = function(){
+         ctx.drawImage(chart, 20, 50);
+    }
+    
+    var chart2= new Image();
+    chart2.src = "pics/instruct2.jpg";
+    chart2.onload = function(){
+         ctx.drawImage(chart2, 380, 50);
+    }
+    
     document.addEventListener('keydown', backToMenu, true);
        
     this.update = function(){
