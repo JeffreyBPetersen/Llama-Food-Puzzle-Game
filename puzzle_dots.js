@@ -874,11 +874,11 @@ function startScreen() {
     }
     
     levelsImage.onload = function(){
-        centerImage(ctx, levelsImage, y + 170);
+        centerImage(ctx, levelsImage, y + 250);
     }
     
     creditsImage.onload = function(){
-        centerImage(ctx, creditsImage, y + 250);
+        centerImage(ctx, creditsImage, y + 170);
     }
     
     canvas.addEventListener("mouseup", checkClick);
@@ -936,15 +936,14 @@ function checkClick(mouseEvent){
     // Instructions Button
     if(x>244 && x<551 && y>187 && y<240){ 
         instructScreen();
-        //alert('Instructions');
     }
     // Levels Button
-    if(x>327 && x<470 && y>261 && y<314){ 
-        levelScreen();
+    if(x > 309 && x < 481 && y>261 && y<314){ 
+        creditScreen();
     }
     // Credits Button
-    if(x > 309 && x < 481 && y>340 && y<394){ 
-        creditScreen();
+    if(x>327 && x<470 && y>340 && y<394){ 
+        levelScreen();
     }
     
 }
@@ -1076,10 +1075,6 @@ function levelScreen(){
         if(i > 25 && i <= 30){
             ctx.fillText("L " + i, 80+100*k, 350);
         }
-        /*
-        if(i > 30 && i <= 35){
-            ctx.fillText("L " + i, 80+100*k, 400);
-        } */
     }
 
     document.addEventListener("click", selectLevel, false);
