@@ -581,7 +581,7 @@ function keyHandler (event) {
 			game.process_move(gui.current_color, "right");
 			gfx.render();
 			break;
-        case 82:
+        case 27:
 			// R clears canvas, refreshes page to Start Screen
             //game.clear();
             //strS.clear();
@@ -991,7 +991,7 @@ function creditScreen(){
 function backToMenu (event) {
     var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
-	if (event.keyCode == 82) {            
+	if (event.keyCode == 27) {            
         ctx.clearRect(0, 0, canvas.width, canvas.height);  
         strS.clear();
         strS.start();
