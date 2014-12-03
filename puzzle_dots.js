@@ -10,6 +10,10 @@ var board_size = 5;
 // Define dot size as a percentage of square size
 var dot_size = 0.8
 
+// Keyboard keys
+var key = Object.freeze({W: 87, A: 65, D: 68, ESC: 27});
+
+// Global variables
 var game;
 var board;
 var gfx;
@@ -22,7 +26,7 @@ function launch () {
 	//init();
 }
 
-// initialize all necessary objects
+// init function 1
 function init(){
 	game = new Game()
 	game.board = new game.Board(board_size)
@@ -33,8 +37,10 @@ function init(){
 	gfx.drawGrid();
 	gfx.drawGoal();
 	gfx.drawPieces();
+	document.addEventListener('keydown', backToMenu, true);
 }
 
+// init function 2
 function init2(num){
 	game = new Game()
 	game.board = new game.Board(board_size)
@@ -45,6 +51,17 @@ function init2(num){
 	gfx.drawGrid();
 	gfx.drawGoal();
 	gfx.drawPieces();
+}
+
+// DEBUG (scheduled for removal)
+function debug_game(){
+	game = new Game()
+	d0 = new game.Dot("red", "up")
+	d1 = new game.Dot("orange", "right")
+	d2 = new game.Dot("yellow", "down")
+	d3 = new game.Dot("green", "left")
+	d4 = new game.Dot("blue", "up")
+	d5 = new game.Dot("purple", "right")
 }
 
 // Adapted from the Mozilla suggested cookie framework
@@ -72,7 +89,69 @@ var docCookies = {
 	}
 };
 
-// constructor for game object
+// KeyHandler
+function keyHandler (event) {
+	switch (event.keyCode) {
+		case key.W:
+			// W moves selected dots in their arrow direction
+			game.process_move(gui.current_color, "forward");
+			gfx.render();
+			break;
+		case key.A:
+			// A rotates selected dots 90 degrees counter-clockwise
+			game.process_move(gui.current_color, "left");
+			gfx.render();
+			break;
+		case key.D:
+			// D rotates selected dots 90 degrees clockwise
+			game.process_move(gui.current_color, "right");
+			gfx.render();
+			break;
+        case key.ESC:
+			// Esc clears canvas, refreshes page to start screen
+            //game.clear();
+            //strS.clear();
+            //strS.start();
+            window.location.reload();
+			break;
+	}
+}
+
+// Select dots of the appropriate color group
+function mouseClick(event) {
+	var x = event.pageX - gui.canvas.offsetLeft;
+	var y = event.pageY - gui.canvas.offsetTop;
+	var space_side = gfx.board_side / game.board.size;
+    var click = new Audio("sound/click.mp3");
+   
+	x -= gfx.board_x;
+	x = Math.floor(x / space_side);
+	y -= gfx.board_y;
+	y = Math.floor(y / space_side);
+	
+	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
+		var dot = game.board.space[x][y].dot;
+		if (dot !== null) {
+			if (game.color_enum[dot.color] % 2 == 1) {
+				if (game.color_enum[gui.current_color] == (game.color_enum[dot.color] + 5) % 6) {
+					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 1) % 6];
+				}
+				else {
+					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 5) % 6];
+				}
+			}
+			else {
+				gui.current_color = dot.color;
+			}
+            click.play();
+		}
+	}
+	gfx.render();
+}
+
+/**
+	Game object [Scary monster Jeff feeds at night.]
+**/
 function Game(){
 	// variable for board
 	// contains positions of pieces and goals
@@ -551,125 +630,13 @@ function Game(){
 		this.load_level(this.level.level_num)
 	}
 }
+/**
+	EOF: Game Object
+**/
 
-// debug function for working on game object, prone to change as needed
-function debug_game(){
-	game = new Game()
-	d0 = new game.Dot("red", "up")
-	d1 = new game.Dot("orange", "right")
-	d2 = new game.Dot("yellow", "down")
-	d3 = new game.Dot("green", "left")
-	d4 = new game.Dot("blue", "up")
-	d5 = new game.Dot("purple", "right")
-}
-
-// KeyHandler
-function keyHandler (event) {
-	switch (event.keyCode) {
-		case 87:
-			// W moves selected dots in their arrow direction
-			game.process_move(gui.current_color, "forward");
-			gfx.render();
-			break;
-		case 65:
-			// A rotates selected dots 90 degrees counter-clockwise
-			game.process_move(gui.current_color, "left");
-			gfx.render();
-			break;
-		case 68:
-			// D rotates selected dots 90 degrees clockwise
-			game.process_move(gui.current_color, "right");
-			gfx.render();
-			break;
-        case 27:
-			// R clears canvas, refreshes page to Start Screen
-            //game.clear();
-            //strS.clear();
-            //strS.start();
-            window.location.reload();
-			break;
-	}
-}
-
-function mouseClick(event) {
-	var x = event.pageX - gui.canvas.offsetLeft;
-	var y = event.pageY - gui.canvas.offsetTop;
-	var space_side = gfx.board_side / game.board.size;
-    var click = new Audio("sound/click.mp3");
-   
-	x -= gfx.board_x;
-	x = Math.floor(x / space_side);
-	y -= gfx.board_y;
-	y = Math.floor(y / space_side);
-
-	// First click selects dots of dot.color
-	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
-		var dot = game.board.space[x][y].dot;
-		if (dot !== null) {
-			if (game.color_enum[dot.color] % 2 == 1) {
-				if (game.color_enum[gui.current_color] == (game.color_enum[dot.color] + 5) % 6) {
-					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 1) % 6];
-				}
-				else {
-					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 5) % 6];
-				}
-			}
-			else {
-				gui.current_color = dot.color;
-			}
-            click.play();
-		}
-	}
-	gfx.render();
-}
-
-/* Game Loop Object -- doesn't do anythng yet since there's no game logic/graphics yet */
-function GameLoop() {
-
-	this.puzzleLoop = function() {
-	    var last = Date.now(); 
-	    // frame rate, fps = 60
-	    var frameRate = 1000/60; 
-
-		function loop() {
-			// Calculate time elapsed since last frame.
-			var now = Date.now();
-			var elapsed = now - last;
-			last = now;
-
-			// request the next frame
-			window.requestAnimationFrame(loop); 
-			
-			// Update frames when elapsed is >= frame
-			while(elapsed >= frameRate){
-				elapsed = elapsed - frameRate;
-				update();
-			}
-			render();		
-		}
-
-		loop();
-	}
-}
-
-function update() {
-    // add game logic
-}
-    
-function render() {
-    // draw stuff
-}
-
-// constructor for gui object
-function Gui(){
-	this.prev_color = undefined;
-	this.current_color = undefined;
-	this.canvas = document.getElementById('game_canvas');
-	this.canvas.addEventListener("click", mouseClick, false);
-	document.addEventListener('keydown', keyHandler, true);
-}
-
-// constructor for gfx object
+/**
+	Gfx object
+**/
 function graphics() {
 	var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
@@ -832,6 +799,63 @@ function graphics() {
 		}
 	}
 }
+/**
+	EOF: Gfx object
+**/
+
+/**
+	Gui object
+**/
+function Gui(){
+	this.prev_color = undefined;
+	this.current_color = undefined;
+	this.canvas = document.getElementById('game_canvas');
+	this.canvas.addEventListener("click", mouseClick, false);
+	document.addEventListener('keydown', keyHandler, true);
+}
+/**
+	EOF: Gui object
+**/
+
+// Primary game loop
+function GameLoop() {
+
+	this.puzzleLoop = function() {
+	    var last = Date.now(); 
+	    // frame rate, fps = 60
+	    var frameRate = 1000/60; 
+
+		function loop() {
+			// Calculate time elapsed since last frame.
+			var now = Date.now();
+			var elapsed = now - last;
+			last = now;
+
+			// request the next frame
+			window.requestAnimationFrame(loop); 
+			
+			// Update frames when elapsed is >= frame
+			while(elapsed >= frameRate){
+				elapsed = elapsed - frameRate;
+				update();
+			}
+			render();		
+		}
+
+		loop();
+	}
+}
+
+function update() {
+    // add game logic
+}
+    
+function render() {
+    // draw stuff
+}
+
+
+//// CODE BELOW REQUIRES FIXES ////
 
 function startScreen() {
     var snd3;  
@@ -854,8 +878,7 @@ function startScreen() {
     var instructImage = new Image();
     
     //load images
-    startImage.src = "pics/start.png";  
-    startImage.style.margin = "0 auto";
+    startImage.src = "pics/start.png";
     creditsImage.src = "pics/credits.png";
     logoImage.src = "pics/puzzle.png";
     levelsImage.src = "pics/levels.png";
@@ -991,7 +1014,7 @@ function creditScreen(){
 function backToMenu (event) {
     var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
-	if (event.keyCode == 27) {            
+	if (event.keyCode == key.ESC) {            
         ctx.clearRect(0, 0, canvas.width, canvas.height);  
         strS.clear();
         strS.start();
@@ -1196,4 +1219,3 @@ function centerText(ctx, txt, y){
     var x = (ctx.canvas.width - d_width) / 2;
     ctx.fillText(txt, x, y);
 }
-
