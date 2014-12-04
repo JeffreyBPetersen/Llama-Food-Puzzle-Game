@@ -11,7 +11,7 @@ var board_size = 5;
 var dot_size = 0.8
 
 // Keyboard keys
-var key = Object.freeze({W: 87, A: 65, D: 68, ESC: 27});
+var key = Object.freeze({W: 87, A: 65, D: 68, P: 80});
 
 // Global variables
 var game;
@@ -107,7 +107,7 @@ function keyHandler (event) {
 			game.process_move(gui.current_color, "right");
 			gfx.render();
 			break;
-        case key.ESC:
+        case key.P:
 			// Esc clears canvas, refreshes page to start screen
             //game.clear();
             //strS.clear();
@@ -846,26 +846,13 @@ function GameLoop() {
 	}
 }
 
-function update() {
-    // add game logic
-}
-    
-function render() {
-    // draw stuff
-}
-
-
-//// CODE BELOW REQUIRES FIXES ////
-
 function startScreen() {
-    var snd3;  
     var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
     var y = ctx.canvas.height / 6;
     var x = ctx.canvas.height /2;
     
     this.start = function (){
-    //this.playSound();
     // fill background
     ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle = "#9ED6E8";
@@ -909,11 +896,10 @@ function startScreen() {
     
     this.update = function(){
         this.clear();
-        init();
+        init2(0);
     }
     
     this.clear = function(){
-        //snd3.pause();
         canvas.removeEventListener("mouseup", checkClick);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -933,17 +919,6 @@ function centerImage(ctx, img, y){
     ctx.drawImage(img, x, y);
 }
 
-// check for mouse positions
-function checkPos(mouseEvent){
-    if(mouseEvent.pageX || mouseEvent.pageY == 0){
-        mouseX = mouseEvent.pageX - this.offsetLeft;
-        mouseY = mouseEvent.pageY - this.offsetTop;
-    }else if(mouseEvent.offsetX || mouseEvent.offsetY == 0){
-        mouseX = mouseEvent.offsetX;
-        mouseY = mouseEvent.offsetY;
-    }
-}
-
 // check whether the position of the mouse is correct
 function checkClick(mouseEvent){
     mouseEvent.preventDefault();
@@ -960,15 +935,14 @@ function checkClick(mouseEvent){
     if(x>244 && x<551 && y>187 && y<240){ 
         instructScreen();
     }
-    // Levels Button
+    // Credits Button
     if(x > 309 && x < 481 && y>261 && y<314){ 
         creditScreen();
-    }
-    // Credits Button
-    if(x>327 && x<470 && y>340 && y<394){ 
+    } 
+    // Levels Button
+    if(x>327 && x<470 && y>350 && y<396){ 
         levelScreen();
-    }
-    
+    }    
 }
 
 function creditScreen(){
@@ -1014,7 +988,7 @@ function creditScreen(){
 function backToMenu (event) {
     var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
-	if (event.keyCode == key.ESC) {            
+	if (event.keyCode == key.P) {            
         ctx.clearRect(0, 0, canvas.width, canvas.height);  
         strS.clear();
         strS.start();
