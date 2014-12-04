@@ -1,6 +1,6 @@
 /**
 	Puzzle Dots: A game for llamas everywhere!
-	Team: Adam, Connor, Jeff, Vanda
+	Team Llama Food
 	
 **/
 
@@ -817,35 +817,7 @@ function Gui(){
 	EOF: Gui object
 **/
 
-// Primary game loop
-function GameLoop() {
-
-	this.puzzleLoop = function() {
-	    var last = Date.now(); 
-	    // frame rate, fps = 60
-	    var frameRate = 1000/60; 
-
-		function loop() {
-			// Calculate time elapsed since last frame.
-			var now = Date.now();
-			var elapsed = now - last;
-			last = now;
-
-			// request the next frame
-			window.requestAnimationFrame(loop); 
-			
-			// Update frames when elapsed is >= frame
-			while(elapsed >= frameRate){
-				elapsed = elapsed - frameRate;
-				update();
-			}
-			render();		
-		}
-
-		loop();
-	}
-}
-
+// Start Menu
 function startScreen() {
     var canvas = document.getElementById('game_canvas');
 	var ctx = canvas.getContext('2d');
@@ -911,40 +883,7 @@ function startScreen() {
     }
 }
 
-// center the images in start screen
-function centerImage(ctx, img, y){
-    var d_width = img.width;
-    var d_height = img.height;
-    var x = (ctx.canvas.width - d_width) / 2;
-    ctx.drawImage(img, x, y);
-}
-
-// check whether the position of the mouse is correct
-function checkClick(mouseEvent){
-    mouseEvent.preventDefault();
-    var rect = document.getElementById('game_canvas').getBoundingClientRect();
-    var x = mouseEvent.clientX - rect.left;
-    var y = mouseEvent.clientY - rect.top;
-    //alert("x: " + x + "y:" + y);
-    
-    // Start Button
-    if(x>332 && x<461 && y>111 && y<165){ 
-        strS.update();
-    }
-    // Instructions Button
-    if(x>244 && x<551 && y>187 && y<240){ 
-        instructScreen();
-    }
-    // Credits Button
-    if(x > 309 && x < 481 && y>261 && y<314){ 
-        creditScreen();
-    } 
-    // Levels Button
-    if(x>327 && x<470 && y>350 && y<396){ 
-        levelScreen();
-    }    
-}
-
+// Team Name
 function creditScreen(){
     strS.clear();
     var canvas = document.getElementById('game_canvas');
@@ -965,7 +904,7 @@ function creditScreen(){
     ctx.fillStyle = 'black';
     ctx.font="20px Georgia";
     centerText(ctx,"Created by", 40);
-    centerText(ctx, "Jeffrey, Connor, Adam, Vanda", 120);
+    centerText(ctx, "Jeffrey, Connor, Vanda, Adam", 120);
     
     var team= new Image();
     team.src = "pics/group_picture.jpg";
@@ -985,16 +924,7 @@ function creditScreen(){
 
 }
 
-function backToMenu (event) {
-    var canvas = document.getElementById('game_canvas');
-	var ctx = canvas.getContext('2d');
-	if (event.keyCode == key.P) {            
-        ctx.clearRect(0, 0, canvas.width, canvas.height);  
-        strS.clear();
-        strS.start();
-	}
-}
-
+// Displays instructions for game play.
 function instructScreen(){
     strS.clear();
     var canvas = document.getElementById('game_canvas');
@@ -1033,6 +963,7 @@ function instructScreen(){
     }
 }
 
+// Displays levels
 function levelScreen(){
     strS.clear();
     var canvas = document.getElementById('game_canvas');
@@ -1086,6 +1017,59 @@ function levelScreen(){
     }
 }
 
+// center the images
+function centerImage(ctx, img, y){
+    var d_width = img.width;
+    var d_height = img.height;
+    var x = (ctx.canvas.width - d_width) / 2;
+    ctx.drawImage(img, x, y);
+}
+
+// center the text
+function centerText(ctx, txt, y){
+    var d_width = ctx.measureText(txt).width;
+    var x = (ctx.canvas.width - d_width) / 2;
+    ctx.fillText(txt, x, y);
+}
+
+// check whether the position of the mouse is clickable
+function checkClick(mouseEvent){
+    mouseEvent.preventDefault();
+    var rect = document.getElementById('game_canvas').getBoundingClientRect();
+    var x = mouseEvent.clientX - rect.left;
+    var y = mouseEvent.clientY - rect.top;
+    //alert("x: " + x + "y:" + y);
+    
+    // Start Button
+    if(x>332 && x<461 && y>111 && y<165){ 
+        strS.update();
+    }
+    // Instructions Button
+    if(x>244 && x<551 && y>187 && y<240){ 
+        instructScreen();
+    }
+    // Credits Button
+    if(x > 309 && x < 481 && y>261 && y<314){ 
+        creditScreen();
+    } 
+    // Levels Button
+    if(x>327 && x<470 && y>350 && y<396){ 
+        levelScreen();
+    }    
+}
+
+// Go back to start menu from other screens
+function backToMenu (event) {
+    var canvas = document.getElementById('game_canvas');
+	var ctx = canvas.getContext('2d');
+	if (event.keyCode == key.P) {            
+        ctx.clearRect(0, 0, canvas.width, canvas.height);  
+        strS.clear();
+        strS.start();
+	}
+}
+
+// Level Selection Function
 function selectLevel(e) {
     e.preventDefault();
     var rect = document.getElementById('game_canvas').getBoundingClientRect();
@@ -1188,8 +1172,4 @@ function selectLevel(e) {
     }
 }
 
-function centerText(ctx, txt, y){
-    var d_width = ctx.measureText(txt).width;
-    var x = (ctx.canvas.width - d_width) / 2;
-    ctx.fillText(txt, x, y);
-}
+
