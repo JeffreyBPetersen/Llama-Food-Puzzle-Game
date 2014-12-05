@@ -11,7 +11,7 @@ var board_size = 5;
 var dot_size = 0.8
 
 // Keyboard keys
-var key = Object.freeze({W: 87, A: 65, D: 68, P: 80});
+var key = Object.freeze({W: 87, A: 65, D: 68, R: 82, P: 80});
 
 // Global variables
 var game;
@@ -116,9 +116,16 @@ function keyHandler (event) {
 			}
 			break;
 		case key.D:
-		if (gui.win_state == false) {
+			if (gui.win_state == false) {
 				// D rotates selected dots 90 degrees clockwise
 				game.process_move(gui.current_color, "right");
+				gfx.render();
+			}
+			break;
+		case key.R:
+			if (gui.win_state == false) {
+				//R resets level
+				game.reset_level();
 				gfx.render();
 			}
 			break;
@@ -681,6 +688,10 @@ function graphics() {
 		ctx.fillRect(this.ui_width + this.board_side, 0, canvas.width, canvas.height);
 		ctx.fillRect(this.board_x, 0, this.board_x + this.board_side, this.board_y);
 		ctx.fillRect(this.board_x, this.board_y + this.board_side, canvas.height, this.board_x + this.board_side);
+		
+		ctx.fillStyle = "black";
+		ctx.font="20px Georgia";
+		ctx.fillText("Moves: " + game.level.move_count,660,50);
 	}
 
 	//draws the board.size X board.size grid (not including pieces)
