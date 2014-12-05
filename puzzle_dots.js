@@ -93,19 +93,34 @@ var docCookies = {
 function keyHandler (event) {
 	switch (event.keyCode) {
 		case key.W:
-			// W moves selected dots in their arrow direction
-			game.process_move(gui.current_color, "forward");
-			gfx.render();
+			if (gui.win_state == false) {
+				// W moves selected dots in their arrow direction
+				game.process_move(gui.current_color, "forward");
+				gfx.render();
+				if (game.is_win_state()) {
+					gfx.winMessage();
+					gui.win_state = true;
+				}
+			}
+			else {
+				gui.win_state = false;
+				game.level.level_num++;
+				init2(game.level.level_num);
+			}
 			break;
 		case key.A:
 			// A rotates selected dots 90 degrees counter-clockwise
-			game.process_move(gui.current_color, "left");
-			gfx.render();
+			if (gui.win_state == false) {
+				game.process_move(gui.current_color, "left");
+				gfx.render();
+			}
 			break;
 		case key.D:
-			// D rotates selected dots 90 degrees clockwise
-			game.process_move(gui.current_color, "right");
-			gfx.render();
+		if (gui.win_state == false) {
+				// D rotates selected dots 90 degrees clockwise
+				game.process_move(gui.current_color, "right");
+				gfx.render();
+			}
 			break;
         case key.P:
 			// Esc clears canvas, refreshes page to start screen
@@ -119,34 +134,36 @@ function keyHandler (event) {
 
 // Select dots of the appropriate color group
 function mouseClick(event) {
-	var x = event.pageX - gui.canvas.offsetLeft;
-	var y = event.pageY - gui.canvas.offsetTop;
-	var space_side = gfx.board_side / game.board.size;
-    var click = new Audio("sound/click.mp3");
-   
-	x -= gfx.board_x;
-	x = Math.floor(x / space_side);
-	y -= gfx.board_y;
-	y = Math.floor(y / space_side);
-	
-	if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
-		var dot = game.board.space[x][y].dot;
-		if (dot !== null) {
-			if (game.color_enum[dot.color] % 2 == 1) {
-				if (game.color_enum[gui.current_color] == (game.color_enum[dot.color] + 5) % 6) {
-					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 1) % 6];
+	if (gui.win_state == false) {
+		var x = event.pageX - gui.canvas.offsetLeft;
+		var y = event.pageY - gui.canvas.offsetTop;
+		var space_side = gfx.board_side / game.board.size;
+		var click = new Audio("sound/click.mp3");
+	   
+		x -= gfx.board_x;
+		x = Math.floor(x / space_side);
+		y -= gfx.board_y;
+		y = Math.floor(y / space_side);
+		
+		if (x >= 0 && x < game.board.size && y >= 0 && y < game.board.size) {
+			var dot = game.board.space[x][y].dot;
+			if (dot !== null) {
+				if (game.color_enum[dot.color] % 2 == 1) {
+					if (game.color_enum[gui.current_color] == (game.color_enum[dot.color] + 5) % 6) {
+						gui.current_color = game.color_enum[(game.color_enum[dot.color] + 1) % 6];
+					}
+					else {
+						gui.current_color = game.color_enum[(game.color_enum[dot.color] + 5) % 6];
+					}
 				}
 				else {
-					gui.current_color = game.color_enum[(game.color_enum[dot.color] + 5) % 6];
+					gui.current_color = dot.color;
 				}
+				click.play();
 			}
-			else {
-				gui.current_color = dot.color;
-			}
-            click.play();
 		}
+		gfx.render();
 	}
-	gfx.render();
 }
 
 /**
@@ -798,6 +815,13 @@ function graphics() {
 			}
 		}
 	}
+	
+	this.winMessage = function() {
+		ctx.fillStyle = "black";
+		ctx.font="20px Georgia";
+		ctx.fillText("You Win!",45,50);
+		ctx.fillText("Press 'w' to proceed", 5, 80);
+	}
 }
 /**
 	EOF: Gfx object
@@ -809,6 +833,7 @@ function graphics() {
 function Gui(){
 	this.prev_color = undefined;
 	this.current_color = undefined;
+	this.win_state = false;
 	this.canvas = document.getElementById('game_canvas');
 	this.canvas.addEventListener("click", mouseClick, false);
 	document.addEventListener('keydown', keyHandler, true);
