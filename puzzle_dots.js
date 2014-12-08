@@ -106,7 +106,6 @@ function keyHandler (event) {
 			else {
 				gui.win_state = false;
 				game.level.level_num++;
-                // ADD HERE!
 				init2(game.level.level_num);
 			}
 			break;
@@ -694,6 +693,7 @@ function graphics() {
 		ctx.fillStyle = "black";
 		ctx.font="20px Georgia";
 		ctx.fillText("Moves: " + game.level.move_count,660,50);
+        ctx.fillText("Level: " + game.level.level_num,660,80);
 	}
 
 	//draws the board.size X board.size grid (not including pieces)
