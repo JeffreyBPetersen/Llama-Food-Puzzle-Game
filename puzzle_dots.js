@@ -42,6 +42,7 @@ function init(){
 
 // init function 2
 function init2(num){
+    document.removeEventListener("click", selectLevel, false);
 	game = new Game()
 	game.board = new game.Board(board_size)
 	game.load_level(num);
@@ -105,6 +106,7 @@ function keyHandler (event) {
 			else {
 				gui.win_state = false;
 				game.level.level_num++;
+                // ADD HERE!
 				init2(game.level.level_num);
 			}
 			break;
@@ -1027,6 +1029,7 @@ function levelScreen(){
         if(i > 5 && i <= 10){
             ctx.fillText("L " + i, 80+100*k, 150);
         }
+        
         if(i > 10 && i <= 15){
             ctx.fillText("L " + i, 80+100*k, 200);
         }
@@ -1036,9 +1039,11 @@ function levelScreen(){
         if(i > 20 && i <= 25){
             ctx.fillText("L " + i, 80+100*k, 300);
         }
+        
+        /*
         if(i > 25 && i <= 30){
             ctx.fillText("L " + i, 80+100*k, 350);
-        }
+        } */
     }
 
     document.addEventListener("click", selectLevel, false);
@@ -1191,6 +1196,8 @@ function selectLevel(e) {
     if(x >580 && x <630 && y>280 && y<300){ 
         init2(25);
     }
+    
+    /*
     if(x >180 && x <250 && y>330 && y<350){ 
         init2(26);
     } 
@@ -1206,6 +1213,7 @@ function selectLevel(e) {
     if(x >580 && x <630 && y>330 && y<350){ 
         init2(30);
     }
+    */
 }
 
 
