@@ -308,6 +308,72 @@ function Game(){
 				this.board.space[4][0].goal = "green"
 				this.board.space[4][4].goal = "purple"
 				break
+            case 10:
+				this.board = new this.Board(5)
+				this.board.space[2][1].dot = new this.Dot("orange", "down")
+				this.board.space[1][3].dot = new this.Dot("green", "left")
+                this.board.space[0][3].dot = new this.Dot("yellow", "right")
+				this.board.space[3][1].dot = new this.Dot("purple", "down")
+				this.board.space[4][3].dot = new this.Dot("orange", "up")
+                this.board.space[3][3].dot = new this.Dot("orange", "up")
+				this.board.space[1][2].goal = "yellow"
+				this.board.space[4][4].goal = "orange"
+                this.board.space[4][2].goal = "orange"
+				break
+            case 11:
+				this.board = new this.Board(5)
+				this.board.space[1][3].dot = new this.Dot("yellow", "up")
+				this.board.space[1][4].dot = new this.Dot("yellow", "up")
+				this.board.space[2][1].dot = new this.Dot("yellow", "down")
+				this.board.space[1][3].dot = new this.Dot("yellow", "right")
+                this.board.space[2][0].dot = new this.Dot("yellow", "left")
+				this.board.space[0][3].dot = new this.Dot("yellow", "up")
+                this.board.space[3][3].dot = new this.Dot("blue", "up")
+                this.board.space[3][4].dot = new this.Dot("blue", "right")
+                this.board.space[0][0].goal = "green"
+                this.board.space[1][1].goal = "green"
+				break
+            case 12:
+				this.board = new this.Board(5)
+				this.board.space[4][4].dot = new this.Dot("red", "left")
+				this.board.space[2][3].dot = new this.Dot("yellow", "right")
+				this.board.space[1][0].dot = new this.Dot("green", "down")
+				this.board.space[0][3].dot = new this.Dot("purple", "right")
+                this.board.space[3][2].dot = new this.Dot("blue", "right")
+				this.board.space[0][0].goal = "blue"
+				break
+            case 13:
+				this.board = new this.Board(5)
+				this.board.space[4][1].dot = new this.Dot("red", "right")
+				this.board.space[2][3].dot = new this.Dot("red", "right")
+				this.board.space[1][1].dot = new this.Dot("green", "right")
+				this.board.space[0][1].dot = new this.Dot("orange", "right")
+                this.board.space[3][1].dot = new this.Dot("blue", "right")
+				this.board.space[1][0].goal = "purple"
+                this.board.space[2][0].goal = "orange"
+				break
+            case 14:
+				this.board = new this.Board(5)
+				this.board.space[4][1].dot = new this.Dot("red", "right")
+				this.board.space[2][3].dot = new this.Dot("red", "right")
+				this.board.space[1][1].dot = new this.Dot("green", "right")
+				this.board.space[0][1].dot = new this.Dot("green", "left")
+                this.board.space[3][1].dot = new this.Dot("orange", "right")
+                this.board.space[4][4].goal = "red"
+                this.board.space[0][0].goal = "yellow"
+				break
+            case 15:
+				this.board = new this.Board(6)
+				this.board.space[0][3].dot = new this.Dot("blue", "left")
+				this.board.space[2][3].dot = new this.Dot("orange", "right")
+				this.board.space[4][4].dot = new this.Dot("red", "up")
+                this.board.space[1][5].dot = new this.Dot("red", "down")
+                this.board.space[2][3].dot = new this.Dot("orange", "down")
+				this.board.space[4][2].dot = new this.Dot("yellow", "right")
+                this.board.space[5][5].dot = new this.Dot("purple", "up")
+				this.board.space[1][5].goal = "orange"
+                this.board.space[3][0].goal = "purple"
+				break
 		}
 	}
 	
@@ -1040,7 +1106,13 @@ function levelScreen(){
         }
         if(i > 25 && i <= 30){
             ctx.fillText("L " + i, 80+100*k, 350);
-        } 
+        }
+        
+        /*
+        if(i > 30 && i <= 35){
+            ctx.fillText("L " + i, 80+100*k, 400);
+        }
+        */
     }
 
     document.addEventListener("click", selectLevel, false);
