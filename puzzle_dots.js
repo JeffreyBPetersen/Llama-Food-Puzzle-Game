@@ -237,19 +237,19 @@ function Game(){
 		this.level.move_count = 0
 		switch(level){
 			// moving forward
-			case 0:
+			case 1:
 				this.board = new this.Board(3)
 				this.board.space[1][0].goal = "blue"
 				this.board.space[1][2].dot = new this.Dot("blue", "up")
 				break
 			// turning
-			case 1:
+			case 2:
 				this.board = new this.Board(3)
 				this.board.space[0][0].goal = "blue"
 				this.board.space[2][2].dot = new this.Dot("blue", "up")
 				break
 			// shared movement
-			case 2:
+			case 3:
 				this.board = new this.Board(3)
 				this.board.space[0][0].goal = "blue"
 				this.board.space[2][2].goal = "blue"
@@ -257,14 +257,14 @@ function Game(){
 				this.board.space[2][0].dot = new this.Dot("blue", "down")
 				break
 			// simple blending
-			case 3:
+			case 4:
 				this.board = new this.Board(3)
 				this.board.space[1][0].goal = "purple"
 				this.board.space[0][2].dot = new this.Dot("red", "up")
 				this.board.space[2][2].dot = new this.Dot("blue", "up")
 				break
 			// absorbent blending
-			case 4:
+			case 5:
 				this.board = new this.Board(3)
 				this.board.space[1][0].goal = "purple"
 				this.board.space[0][2].dot = new this.Dot("red", "up")
@@ -272,13 +272,13 @@ function Game(){
 				this.board.space[2][2].dot = new this.Dot("blue", "up")
 				break
 			// destructive blending
-			case 5:
+			case 6:
 				this.board = new this.Board(3)
 				this.board.space[0][1].dot = new this.Dot("red", "right")
 				this.board.space[2][1].dot = new this.Dot("green", "left")
 				break
 			// tricky collisions | least moves: Jeff - 30
-			case 6:
+			case 7:
 				this.board = new this.Board(6)
 				for(var i = 0; i < 6; i++){
 					this.board.space[i][5].dot = new this.Dot(this.color_enum[i], "up")
@@ -286,7 +286,7 @@ function Game(){
 				}
 				break
 			// alternating selections
-			case 7:
+			case 8:
 				this.board = new this.Board(5)
 				this.board.space[1][1].dot = new this.Dot("blue", "down")
 				this.board.space[1][3].dot = new this.Dot("green", "up")
@@ -297,7 +297,7 @@ function Game(){
 				this.board.space[2][4].goal = "blue"
 				break
 			// tricky selections | least moves: Jeff - 20
-			case 8:
+			case 9:
 				this.board = new this.Board(5)
 				this.board.space[1][1].dot = new this.Dot("blue", "down")
 				this.board.space[1][3].dot = new this.Dot("green", "up")
@@ -906,7 +906,7 @@ function startScreen() {
     
     this.update = function(){
         this.clear();
-        init2(0);
+        init2(1);
     }
     
     this.clear = function(){
@@ -1119,85 +1119,84 @@ function selectLevel(e) {
     //alert("x: " + x + "y:" + y);
     
     if(x>176 && x<211 && y>78 && y<105){ 
-        init2(0);
-    }
-    if(x>281 && x<320 && y>78 && y<105){ 
         init2(1);
     }
-    if(x>379 && x<417 && y>78 && y<105){ 
+    if(x>281 && x<320 && y>78 && y<105){ 
         init2(2);
     }
-    if(x >477 && x <516 && y>78 && y<105){ 
-        init2(3);
-    }
-    if(x >578 && x <615 && y>78 && y<105){ 
+    if(x>379 && x<417 && y>78 && y<105){ 
         init2(4);
     }
-    if(x > 679 && x <720 && y>78 && y<105){ 
+    if(x >477 && x <516 && y>78 && y<105){ 
         init2(5);
     }
-    if(x>176 && x<211 && y>132 && y<150){ 
+    if(x >578 && x <615 && y>78 && y<105){ 
         init2(6);
-    } 
-    if(x>281 && x<320 && y>132 && y<150){ 
+    }
+    if(x > 679 && x <720 && y>78 && y<105){ 
         init2(7);
     }
-    if(x>379 && x<417 && y>132 && y<150){ 
+    if(x>176 && x<211 && y>132 && y<150){ 
         init2(8);
-    }
-    if(x >477 && x <516 && y>132 && y<150){ 
+    } 
+    if(x>281 && x<320 && y>132 && y<150){ 
         init2(9);
     }
-    if(x >578 && x <615 && y>132 && y<150){ 
+    if(x>379 && x<417 && y>132 && y<150){ 
         init2(10);
     }
-    if(x > 679 && x <720 && y>180 && y<205){ 
+    if(x >477 && x <516 && y>132 && y<150){ 
         init2(11);
     }
-    if(x>176 && x<211 && y>180 && y<205){ 
+    if(x >578 && x <615 && y>132 && y<150){ 
         init2(12);
-    } 
-    if(x>281 && x<320 && y>180 && y<205){ 
+    }
+    if(x > 679 && x <720 && y>180 && y<205){ 
         init2(13);
     }
-    if(x>379 && x<417 && y>180 && y<205){ 
+    if(x>176 && x<211 && y>180 && y<205){ 
         init2(14);
-    }
-    if(x >580 && x <628 && y>180 && y<205){ 
+    } 
+    if(x>281 && x<320 && y>180 && y<205){ 
         init2(15);
     }
-    if(x >180 && x <250 && y>232 && y<250){ 
+    if(x>379 && x<417 && y>180 && y<205){ 
         init2(16);
-    } 
-    if(x>281 && x<324 && y>232 && y<250){ 
+    }
+    if(x >580 && x <628 && y>180 && y<205){ 
         init2(17);
     }
-    if(x>379 && x<427 && y>232 && y<250){ 
+    if(x >180 && x <250 && y>232 && y<250){ 
         init2(18);
-    }
-    if(x >477 && x <526 && y>232 && y<250){ 
+    } 
+    if(x>281 && x<324 && y>232 && y<250){ 
         init2(19);
     }
-    if(x >580 && x <630 && y>232 && y<250){ 
+    if(x>379 && x<427 && y>232 && y<250){ 
         init2(20);
     }
-    if(x >180 && x <250 && y>280 && y<300){ 
+    if(x >477 && x <526 && y>232 && y<250){ 
         init2(21);
-    } 
-    if(x>281 && x<324 && y>280 && y<300){ 
+    }
+    if(x >580 && x <630 && y>232 && y<250){ 
         init2(22);
     }
-    if(x>379 && x<427 && y>280 && y<300){ 
+    if(x >180 && x <250 && y>280 && y<300){ 
         init2(23);
-    }
-    if(x >477 && x <526 && y>280 && y<300){ 
+    } 
+    if(x>281 && x<324 && y>280 && y<300){ 
         init2(24);
     }
-    if(x >580 && x <630 && y>280 && y<300){ 
+    if(x>379 && x<427 && y>280 && y<300){ 
         init2(25);
     }
-    
     /*
+    if(x >477 && x <526 && y>280 && y<300){ 
+        init2(26);
+    }
+    if(x >580 && x <630 && y>280 && y<300){ 
+        init2(27);
+    }
     if(x >180 && x <250 && y>330 && y<350){ 
         init2(26);
     } 
