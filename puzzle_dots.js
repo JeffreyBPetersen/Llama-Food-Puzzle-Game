@@ -374,6 +374,31 @@ function Game(){
 				this.board.space[1][5].goal = "orange"
                 this.board.space[3][0].goal = "purple"
 				break
+			case 16:
+				this.board = new this.Board(3)
+				this.board.space[0][0].dot = new this.Dot("green", "up")
+				this.board.space[0][2].dot = new this.Dot("yellow", "down")
+				this.board.space[1][1].dot = new this.Dot("red", "left")
+				break
+			case 17:
+				this.board = new this.Board(3)
+				this.board.space[2][1].dot = new this.Dot("blue", "left")
+				this.board.space[2][2].dot = new this.Dot("orange", "right")
+				this.board.space[2][0].dot = new this.Dot("red", "up")
+                this.board.space[1][2].dot = new this.Dot("red", "down")
+				this.board.space[1][2].goal = "orange"
+                this.board.space[2][1].goal = "purple"
+				break
+            case 18:
+				this.board = new this.Board(4)
+				this.board.space[0][0].dot = new this.Dot("orange", "right")
+				this.board.space[0][2].dot = new this.Dot("red", "right")
+				this.board.space[2][0].dot = new this.Dot("blue", "right")
+				this.board.space[1][1].dot = new this.Dot("purple", "right")
+				this.board.space[2][1].goal = "red"
+				this.board.space[2][3].goal = "red"
+				this.board.space[3][3].goal = "blue"				
+				break
 		}
 	}
 	
