@@ -399,6 +399,71 @@ function Game(){
 				this.board.space[2][3].goal = "red"
 				this.board.space[3][3].goal = "blue"				
 				break
+			case 19:
+				this.board = new this.Board(6)
+				for(var i = 0; i < 3; i++){
+					this.board.space[0][i].dot = new this.Dot("blue", "right")
+					this.board.space[1][i].dot = new this.Dot("red", "right")
+					this.board.space[2][i].dot = new this.Dot("yellow", "right")
+				}
+				for(var i = 0; i < 6; i++)
+					this.board.space[3][i].goal = this.color_enum[i]
+				break
+			case 20:
+				this.board = new this.Board(6)
+				for(var i = 0; i < 6; i++){
+					for(var j = 0; j < 6; j++){
+						this.board.space[i][j].dot = new this.Dot(this.color_enum[(i+j)%6], "right")
+					}
+					this.board.space[i][5-i].goal = "purple"
+				}
+				break
+			case 21:
+				this.board = new this.Board(6)
+				for(var i = 0; i < 6; i++){
+					for(var j = 0; j < 6; j++){
+						this.board.space[i][j].dot = new this.Dot(this.color_enum[(i+j)%6], "right")
+					}
+					this.board.space[i][5-i].goal = "orange"
+					this.board.space[(i+2) % 6][5-i].goal = "green"
+					this.board.space[(i+4) % 6][5-i].goal = "purple"
+				}
+				break
+			case 22:
+				this.board = new this.Board(6)
+				for(var i = 0; i < 6; i++){
+					for(var j = 0; j < 6; j++){
+						if((i*j + j) % 3 != 0)
+							this.board.space[i][j].dot = new this.Dot(this.color_enum[(i+j)%6], "right")
+					}
+					//this.board.space[i][5-i].goal = "purple"
+				}
+				this.board.space[1][4].goal = "red"
+				this.board.space[4][1].goal = "red"
+				break
+			case 23:
+				this.board = new this.Board(8)
+				this.board.space[0][0].dot = new this.Dot("red", "up")
+				this.board.space[0][7].dot = new this.Dot("red", "up")
+				this.board.space[7][7].dot = new this.Dot("red", "up")
+				this.board.space[7][0].dot = new this.Dot("red", "up")
+				this.board.space[1][1].dot = new this.Dot("blue", "up")
+				this.board.space[1][6].dot = new this.Dot("blue", "up")
+				this.board.space[6][6].dot = new this.Dot("blue", "up")
+				this.board.space[6][1].dot = new this.Dot("blue", "up")
+				this.board.space[2][2].dot = new this.Dot("purple", "up")
+				this.board.space[2][5].dot = new this.Dot("purple", "up")
+				this.board.space[5][5].dot = new this.Dot("purple", "up")
+				this.board.space[5][2].dot = new this.Dot("purple", "up")
+				this.board.space[1][1].goal = "purple"
+				this.board.space[1][6].goal = "purple"
+				this.board.space[6][6].goal = "purple"
+				this.board.space[6][1].goal = "purple"
+				this.board.space[2][2].goal = "purple"
+				this.board.space[2][5].goal = "purple"
+				this.board.space[5][5].goal = "purple"
+				this.board.space[5][2].goal = "purple"
+				break
 		}
 	}
 	
